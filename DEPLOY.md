@@ -129,7 +129,10 @@
 2. **生产库还没建表**：Postgres 在生产不会自动 `push`。确认 Build Command 是 `pnpm run ci`，且构建日志跑过 `payload migrate`。缺 migration 时本地执行 `pnpm payload migrate:create` 后重新部署。
 
 **上传图片失败**  
-→ 未配 `BLOB_READ_WRITE_TOKEN`，或 Blob 未绑定到该项目。
+→ 常见原因：
+1. 未配 `BLOB_READ_WRITE_TOKEN`，或 Blob 未绑定到该项目  
+2. Blob store 必须是 **Public**（Payload 的 Vercel Blob 适配器不支持 Private）  
+3. `413 Content Too Large`：文件经服务端上传超过 Vercel ~4.5MB 限制。仓库已开 `clientUploads: true`（直传 Blob）；改完后需 Redeploy。临时也可先压图到 4MB 以下再传。
 
 **前台看不到文章**  
 → 确认 Admin 里状态是 **Published**（草稿不会出现在前台）。

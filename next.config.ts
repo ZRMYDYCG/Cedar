@@ -10,6 +10,10 @@ const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
+  // Keep migration JSON snapshots out of serverless bundles
+  outputFileTracingExcludes: {
+    '*': ['./src/migrations/*.json']
+  },
   images: {
     localPatterns: [
       {
