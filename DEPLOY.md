@@ -30,7 +30,7 @@
    - Framework：Next.js
    - Root Directory：`.`
    - Install Command：`pnpm install`
-   - Build Command：`pnpm build`
+   - Build Command：`pnpm run ci`（仓库已带 `vercel.json`，会自动用这个；作用是先 `payload migrate` 建表，再 `next build`）
 4. **先不要 Deploy**，先完成下面的 Storage / 环境变量
 
 ---
@@ -68,13 +68,17 @@
 
 ## 四、首次部署
 
-1. 点 **Deploy**（或 push 任意提交触发）
-2. 构建成功后打开：
+1. 确认仓库已包含 `src/migrations/`（初始建表 SQL）和 `vercel.json`（构建前跑 migrate）
+2. 点 **Deploy**（或 push 任意提交触发）
+3. 构建日志里应出现 `Migrating: ..._initial` / `Migrated`
+4. 构建成功后打开：
    - 站点：`https://<项目名>.vercel.app`
    - CMS：`https://<项目名>.vercel.app/admin`
-3. **创建第一个管理员账号**（仅首次）
-4. 在 Admin 里建 Posts / Categories / Tags / Media → **Publish**
-5. 刷新前台即可看到内容
+5. **创建第一个管理员账号**（仅首次）
+6. 在 Admin 里建 Posts / Categories / Tags / Media → **Publish**
+7. 刷新前台即可看到内容
+
+以后改了 Collection / 字段：本地跑 `pnpm payload migrate:create`，把生成的 migration 一并 commit，再部署。
 
 ---
 
@@ -119,8 +123,10 @@
 **构建失败：缺少 `POSTGRES_URL` / `PAYLOAD_SECRET`**  
 → 环境变量未配齐，或未勾选 Production。
 
-**Admin 打不开 / 500**  
-→ 看 Vercel 函数日志；多数是数据库连不上或 `PAYLOAD_SECRET` 为空。
+**Admin 打不开 / 500 / Application error（Digest …）**  
+→ 看 Vercel 函数日志。常见原因：
+1. 数据库连不上或 `PAYLOAD_SECRET` 为空  
+2. **生产库还没建表**：Postgres 在生产不会自动 `push`。确认 Build Command 是 `pnpm run ci`，且构建日志跑过 `payload migrate`。缺 migration 时本地执行 `pnpm payload migrate:create` 后重新部署。
 
 **上传图片失败**  
 → 未配 `BLOB_READ_WRITE_TOKEN`，或 Blob 未绑定到该项目。
@@ -139,7 +145,8 @@
 - [ ] Vercel 已 Import 并关联仓库
 - [ ] Postgres + Blob 已创建并连接到项目
 - [ ] 四个环境变量已配置（含生产专用 `PAYLOAD_SECRET`）
-- [ ] 首次 Deploy 成功
+- [ ] 已提交 `src/migrations/`，Build Command 为 `pnpm run ci`
+- [ ] 首次 Deploy 成功（日志含 migrate）
 - [ ] `/admin` 已创建管理员
 - [ ] 已 Publish 至少一篇文章验证前台
 - [ ] （可选）自定义域名 + 更新 `NEXT_PUBLIC_SERVER_URL`
