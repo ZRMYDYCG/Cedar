@@ -1,4 +1,5 @@
 import { mapPostToCard, type PostCardWithHtml } from '@/data/cms/map-post'
+import { safeCms } from '@/data/cms/safe'
 import { getPayloadClient } from '@/lib/payload'
 import type { Post } from '@/payload-types'
 import type { Where } from 'payload'
@@ -22,38 +23,56 @@ async function findPosts(where: Where = published, limit = 100) {
 }
 
 export async function getPublishedPosts(): Promise<PostCardWithHtml[]> {
-  const docs = await findPosts(published, 200)
-  return docs.map(doc => mapPostToCard(doc))
+  return safeCms(
+    'getPublishedPosts',
+    async () => {
+      const docs = await findPosts(published, 200)
+      return docs.map(doc => mapPostToCard(doc))
+    },
+    []
+  )
 }
 
 export async function getFeaturedPosts(): Promise<{
   feature?: PostCardWithHtml
   featureList: PostCardWithHtml[]
 }> {
-  const docs = await findPosts(
-    {
-      and: [published, { featured: { equals: true } }]
+  return safeCms(
+    'getFeaturedPosts',
+    async () => {
+      const docs = await findPosts(
+        {
+          and: [published, { featured: { equals: true } }]
+        },
+        12
+      )
+      const cards = docs.map(doc => mapPostToCard(doc))
+      return {
+        feature: cards[0],
+        featureList: cards.slice(1)
+      }
     },
-    12
+    { featureList: [] }
   )
-  const cards = docs.map(doc => mapPostToCard(doc))
-  return {
-    feature: cards[0],
-    featureList: cards.slice(1)
-  }
 }
 
 export async function getPostBySlug(
   slug: string
 ): Promise<PostCardWithHtml | null> {
-  const docs = await findPosts(
-    {
-      and: [published, { slug: { equals: slug } }]
+  return safeCms(
+    `getPostBySlug:${slug}`,
+    async () => {
+      const docs = await findPosts(
+        {
+          and: [published, { slug: { equals: slug } }]
+        },
+        1
+      )
+      if (!docs[0]) return null
+      return mapPostToCard(docs[0], { withHtml: true })
     },
-    1
+    null
   )
-  if (!docs[0]) return null
-  return mapPostToCard(docs[0], { withHtml: true })
 }
 
 export async function getAdjacentPosts(slug: string): Promise<{
@@ -88,21 +107,27 @@ export async function getPostsByTaxonomy(options: {
 }
 
 export async function getSiteStats() {
-  const payload = await getPayloadClient()
-  const [posts, categories, tags] = await Promise.all([
-    payload.count({ collection: 'posts', where: published }),
-    payload.count({ collection: 'categories' }),
-    payload.count({ collection: 'tags' })
-  ])
-  const publishedPosts = await getPublishedPosts()
-  const wordCount = publishedPosts.reduce(
-    (sum, post) => sum + (post.count_time?.symbolsCount || 0),
-    0
+  return safeCms(
+    'getSiteStats',
+    async () => {
+      const payload = await getPayloadClient()
+      const [posts, categories, tags] = await Promise.all([
+        payload.count({ collection: 'posts', where: published }),
+        payload.count({ collection: 'categories' }),
+        payload.count({ collection: 'tags' })
+      ])
+      const publishedPosts = await getPublishedPosts()
+      const wordCount = publishedPosts.reduce(
+        (sum, post) => sum + (post.count_time?.symbolsCount || 0),
+        0
+      )
+      return {
+        word_count: wordCount,
+        post_count: posts.totalDocs,
+        categories: categories.totalDocs,
+        tags: tags.totalDocs
+      }
+    },
+    { word_count: 0, post_count: 0, categories: 0, tags: 0 }
   )
-  return {
-    word_count: wordCount,
-    post_count: posts.totalDocs,
-    categories: categories.totalDocs,
-    tags: tags.totalDocs
-  }
 }
