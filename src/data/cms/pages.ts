@@ -1,4 +1,5 @@
 import { paragraphLexical } from '@/data/cms/map-post'
+import { safeCms } from '@/data/cms/safe'
 import { getPayloadClient } from '@/lib/payload'
 import type { Page } from '@/payload-types'
 import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
@@ -10,25 +11,31 @@ export type CmsPage = {
 }
 
 export async function getPageBySlug(slug: string): Promise<CmsPage | null> {
-  const payload = await getPayloadClient()
-  const result = await payload.find({
-    collection: 'pages',
-    where: {
-      and: [
-        { _status: { equals: 'published' } },
-        { slug: { equals: slug } }
-      ]
+  return safeCms(
+    `getPageBySlug:${slug}`,
+    async () => {
+      const payload = await getPayloadClient()
+      const result = await payload.find({
+        collection: 'pages',
+        where: {
+          and: [
+            { _status: { equals: 'published' } },
+            { slug: { equals: slug } }
+          ]
+        },
+        limit: 1,
+        depth: 0
+      })
+      const page = result.docs[0] as Page | undefined
+      if (!page) return null
+      return {
+        title: page.title,
+        slug: page.slug,
+        html: convertLexicalToHTML({ data: page.content })
+      }
     },
-    limit: 1,
-    depth: 0
-  })
-  const page = result.docs[0] as Page | undefined
-  if (!page) return null
-  return {
-    title: page.title,
-    slug: page.slug,
-    html: convertLexicalToHTML({ data: page.content })
-  }
+    null
+  )
 }
 
 /** Used by seed only — re-export helper */

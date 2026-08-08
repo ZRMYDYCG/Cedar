@@ -47,10 +47,14 @@ export async function getFeaturedPosts(): Promise<{
         12
       )
       const cards = docs.map(doc => mapPostToCard(doc))
-      return {
+      const result: {
+        feature?: PostCardWithHtml
+        featureList: PostCardWithHtml[]
+      } = {
         feature: cards[0],
         featureList: cards.slice(1)
       }
+      return result
     },
     { featureList: [] }
   )

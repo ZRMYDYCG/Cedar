@@ -4,23 +4,17 @@ import {
   getPublishedPosts,
   getSiteStats
 } from '@/data/cms/posts'
-import { safeCms } from '@/data/cms/safe'
 import { getCategoriesWithCount, getTagsWithCount } from '@/data/cms/taxonomy'
 
 export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   const [posts, featured, categories, tags, stats] = await Promise.all([
-    safeCms('posts', getPublishedPosts, []),
-    safeCms('featured', getFeaturedPosts, { featureList: [] }),
-    safeCms('categories', getCategoriesWithCount, []),
-    safeCms('tags', getTagsWithCount, []),
-    safeCms('stats', getSiteStats, {
-      word_count: 0,
-      post_count: 0,
-      categories: 0,
-      tags: 0
-    })
+    getPublishedPosts(),
+    getFeaturedPosts(),
+    getCategoriesWithCount(),
+    getTagsWithCount(),
+    getSiteStats()
   ])
 
   return (
