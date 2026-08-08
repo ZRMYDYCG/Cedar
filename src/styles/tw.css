@@ -1,0 +1,21 @@
+/* Utilities + theme tokens only — base/preflight lives in aurora.css */
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@theme inline {
+  --color-ob: var(--text-accent);
+  --color-ob-normal: var(--text-normal);
+  --color-ob-trans: var(--background-trans);
+  --color-ob-backdrop: var(--background-backdrop);
+  --color-ob-accent-55: var(--bg-accent-55);
+  --color-ob-secondary: var(--text-sub-accent);
+  --color-ob-bright: var(--text-bright);
+  --color-ob-invert: var(--text-invert);
+  --color-ob-dim: var(--text-dim);
+  --color-ob-deep-800: var(--background-secondary);
+  --color-ob-deep-900: var(--background-primary);
+  --color-ob-screen: var(--app-screen-bg);
+  --shadow-ob: var(--accent-shadow);
+  --spacing-97: 26rem;
+  --spacing-98: 28rem;
+}

@@ -1,0 +1,315 @@
+/* Port of src/pages/archives.vue scoped timeline styles */
+
+.timeline {
+  position: relative;
+  z-index: 2;
+  line-height: 1.4em;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.timeline h1,
+.timeline h2,
+.timeline h3,
+.timeline h4,
+.timeline h5,
+.timeline h6 {
+  margin-top: 0;
+}
+
+/*----- TIMELINE ITEM -----*/
+.timeline-item {
+  padding-left: 40px;
+  position: relative;
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+/*----- TIMELINE INFO -----*/
+.timeline-info {
+  color: var(--text-accent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  margin: 0 0 0.5em 0;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/*----- TIMELINE MARKER -----*/
+.timeline-marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 15px;
+}
+
+.timeline-marker:before {
+  background: var(--text-accent);
+  border: 3px solid transparent;
+  border-radius: 100%;
+  content: '';
+  display: block;
+  height: 15px;
+  position: absolute;
+  top: 4px;
+  left: 0;
+  width: 15px;
+  transition:
+    background 0.3s ease-in-out,
+    border 0.3s ease-in-out;
+}
+
+.timeline-marker:after {
+  content: '';
+  width: 3px;
+  background: var(--text-normal);
+  display: block;
+  position: absolute;
+  top: 24px;
+  bottom: 0;
+  left: 6px;
+}
+
+.timeline-item:last-child .timeline-marker:after {
+  content: none;
+}
+
+.timeline-item:not(.period):hover .timeline-marker:before {
+  background: transparent;
+  border: 3px solid var(--text-accent);
+}
+
+/*----- TIMELINE CONTENT -----*/
+.timeline-content {
+  padding-bottom: 40px;
+}
+
+.timeline-content p {
+  color: var(--text-normal);
+  margin: 0;
+}
+
+.timeline-content p:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-content a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.timeline-content a:hover {
+  opacity: 0.5;
+}
+
+.timeline-title {
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-bright);
+  position: relative;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+}
+
+.timeline-title:after {
+  position: absolute;
+  bottom: 0;
+  height: 0.25rem;
+  width: 6rem;
+  border-radius: 9999px;
+  content: '';
+  background: var(--main-gradient);
+  left: 0;
+}
+
+/*----- TIMELINE PERIOD -----*/
+.period {
+  padding: 0;
+}
+
+.period .timeline-info {
+  display: none;
+}
+
+.period .timeline-marker:before {
+  background: transparent;
+  content: '';
+  width: 15px;
+  height: auto;
+  border: none;
+  border-radius: 0;
+  top: 0;
+  bottom: 30px;
+  position: absolute;
+  border-top: 3px solid var(--text-normal);
+  border-bottom: 3px solid var(--text-normal);
+}
+
+.period .timeline-marker:after {
+  content: '';
+  height: 32px;
+  top: auto;
+}
+
+.period .timeline-content {
+  padding: 40px 0 70px;
+}
+
+.period .timeline-title {
+  margin: 0;
+}
+
+.period .timeline-title:after {
+  content: none;
+}
+
+/*----------------------------------------------
+    MOD: TIMELINE SPLIT / CENTERED (tablet+)
+    Class lives on the same ul: .timeline.timeline-centered
+----------------------------------------------*/
+@media (min-width: 768px) {
+  .timeline.timeline-split,
+  .timeline.timeline-centered {
+    display: table;
+  }
+
+  .timeline.timeline-split .timeline-item,
+  .timeline.timeline-centered .timeline-item {
+    display: table-row;
+    padding: 0;
+  }
+
+  .timeline.timeline-split .timeline-info,
+  .timeline.timeline-centered .timeline-info,
+  .timeline.timeline-split .timeline-marker,
+  .timeline.timeline-centered .timeline-marker,
+  .timeline.timeline-split .timeline-content,
+  .timeline.timeline-centered .timeline-content,
+  .timeline.timeline-split .period .timeline-info,
+  .timeline.timeline-centered .period .timeline-info {
+    display: table-cell;
+    vertical-align: top;
+  }
+
+  .timeline.timeline-split .timeline-marker,
+  .timeline.timeline-centered .timeline-marker {
+    position: relative;
+  }
+
+  .timeline.timeline-split .timeline-content,
+  .timeline.timeline-centered .timeline-content {
+    padding-left: 30px;
+  }
+
+  .timeline.timeline-split .timeline-info,
+  .timeline.timeline-centered .timeline-info {
+    padding-right: 30px;
+  }
+
+  .timeline.timeline-split .period .timeline-title,
+  .timeline.timeline-centered .period .timeline-title {
+    position: relative;
+    left: -45px;
+  }
+}
+
+/*----------------------------------------------
+  MOD: TIMELINE CENTERED (desktop zig-zag)
+  Requires li.timeline-item as DIRECT children of ul
+  (Vue uses <template v-for> — no wrapper nodes)
+----------------------------------------------*/
+@media (min-width: 992px) {
+  .timeline.timeline-centered,
+  .timeline.timeline-centered .timeline-item,
+  .timeline.timeline-centered .timeline-info,
+  .timeline.timeline-centered .timeline-marker,
+  .timeline.timeline-centered .timeline-content {
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
+
+  .timeline.timeline-centered .timeline-item {
+    padding-bottom: 40px;
+    overflow: hidden;
+  }
+
+  .timeline.timeline-centered .timeline-marker {
+    position: absolute;
+    left: 50%;
+    margin-left: -7.5px;
+  }
+
+  .timeline.timeline-centered .timeline-info,
+  .timeline.timeline-centered .timeline-content {
+    width: 50%;
+  }
+
+  .timeline.timeline-centered > .timeline-item:nth-child(odd) .timeline-info {
+    float: left;
+    text-align: right;
+    padding-right: 30px;
+  }
+
+  .timeline.timeline-centered > .timeline-item:nth-child(odd) .timeline-content {
+    float: right;
+    text-align: left;
+    padding-left: 30px;
+  }
+
+  .timeline.timeline-centered
+    > .timeline-item:nth-child(odd)
+    .timeline-content
+    .timeline-title:after {
+    left: 0;
+    right: initial;
+  }
+
+  .timeline.timeline-centered > .timeline-item:nth-child(even) .timeline-info {
+    float: right;
+    text-align: left;
+    padding-left: 30px;
+  }
+
+  .timeline.timeline-centered > .timeline-item:nth-child(even) .timeline-content {
+    float: left;
+    text-align: right;
+    padding-right: 30px;
+  }
+
+  .timeline.timeline-centered
+    > .timeline-item:nth-child(even)
+    .timeline-content
+    .timeline-title:after {
+    right: 0;
+    left: initial;
+  }
+
+  .timeline.timeline-centered > .timeline-item.period .timeline-content {
+    float: none;
+    padding: 0;
+    width: 100%;
+    text-align: center;
+  }
+
+  .timeline.timeline-centered .timeline-item.period {
+    padding: 50px 0 90px;
+  }
+
+  .timeline.timeline-centered .period .timeline-marker:after {
+    height: 30px;
+    bottom: 0;
+    top: auto;
+  }
+
+  .timeline.timeline-centered .period .timeline-title {
+    left: auto;
+  }
+}

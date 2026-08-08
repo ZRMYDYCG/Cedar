@@ -1,0 +1,30 @@
+.link-group-wrapper {
+  transform: translate3d(0, 0, 0);
+  animation: rowup 60s linear infinite;
+}
+
+.links-group-avatar-pair .links-group-avatar:nth-child(even) {
+  margin-top: 1rem;
+  transform: translate3d(0, 0, 0);
+  transform: translate(-60px);
+}
+.links-group-avatar-pair .links-group-avatar:nth-child(even).diamond-shape {
+  margin-top: 0;
+  transform: translate(-66px);
+}
+
+.link-box-btn-group {
+  position: absolute;
+  right: 2rem;
+  top: 2rem;
+  display: flex;
+}
+
+@keyframes rowup {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-66.6666%);
+  }
+}

@@ -1,0 +1,115 @@
+export type MenuItem = {
+  name: string
+  path: string
+  i18n: Record<string, string>
+  children?: MenuItem[]
+}
+
+export type SiteConfig = {
+  site: {
+    author: string
+    nick: string
+    subtitle: string
+    logo: string
+    avatar: string
+    multi_language: boolean
+  }
+  theme: {
+    dark_mode: boolean
+    profile_shape: 'circle-avatar' | 'diamond-avatar' | 'rounded-avatar'
+    feature: boolean
+    header_gradient_css: string
+    gradient: {
+      color_1: string
+      color_2: string
+      color_3: string
+    }
+    background_gradient_style: {
+      background: string
+      WebkitBackgroundClip: string
+      WebkitTextFillColor: string
+    }
+  }
+  socials: {
+    github?: string
+    twitter?: string
+    stackoverflow?: string
+  }
+  menu: {
+    menus: MenuItem[]
+  }
+}
+
+const gradient =
+  'linear-gradient(130deg, #24c6dc, #5433ff 41.07%, #ff0099 76.05%)'
+
+export const siteConfig: SiteConfig = {
+  site: {
+    author: 'Cedar',
+    nick: 'Cedar',
+    subtitle: 'Notes under the cedar',
+    logo: '',
+    avatar: 'https://avatars.githubusercontent.com/u/9919?s=200&v=4',
+    multi_language: true
+  },
+  theme: {
+    dark_mode: true,
+    profile_shape: 'diamond-avatar',
+    feature: true,
+    header_gradient_css: gradient,
+    gradient: {
+      color_1: '#24c6dc',
+      color_2: '#5433ff',
+      color_3: '#ff0099'
+    },
+    background_gradient_style: {
+      background: gradient,
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent'
+    }
+  },
+  socials: {
+    github: 'https://github.com',
+    twitter: 'https://twitter.com'
+  },
+  menu: {
+    menus: [
+      {
+        name: 'Home',
+        path: '/',
+        i18n: { 'zh-CN': '首页', 'zh-TW': '首頁', en: 'Home' },
+        children: []
+      },
+      {
+        name: 'About',
+        path: '/about',
+        i18n: { 'zh-CN': '关于', 'zh-TW': '關於', en: 'About' },
+        children: []
+      },
+      {
+        name: 'Archives',
+        path: '/archives',
+        i18n: { 'zh-CN': '归档', 'zh-TW': '歸檔', en: 'Archives' },
+        children: []
+      },
+      {
+        name: 'Tags',
+        path: '/tags',
+        i18n: { 'zh-CN': '标签', 'zh-TW': '標籤', en: 'Tags' },
+        children: []
+      },
+      {
+        name: 'Categories',
+        path: '/category',
+        i18n: { 'zh-CN': '分类', 'zh-TW': '分類', en: 'Categories' },
+        children: []
+      },
+      {
+        name: 'Links',
+        path: '/links',
+        i18n: { 'zh-CN': '友链', 'zh-TW': '友鏈', en: 'Friends' },
+        children: []
+      }
+    ]
+  }
+}

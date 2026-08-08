@@ -1,0 +1,261 @@
+/* Theme visual layer (compiled CSS). */
+@import './aurora.css';
+@import './dia.css';
+@import './archives.css';
+@import './linkbox.css';
+@import './linkcard.css';
+@import './comment.css';
+
+/*
+ * Vue App.vue / index.scss body stack:
+ *   html/body → --background-primary-alt (#0d0b12 dark / #fafafa light)
+ *   .app-wrapper → --background-primary (#1a1a1a / #f1f3f9)
+ * Theme class must live on html+body so vars resolve before paint.
+ */
+html,
+body {
+  min-height: 100%;
+  background: var(--background-primary-alt, #0d0b12);
+}
+
+body {
+  margin: 0;
+  font-size: 16px;
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  line-height: 2;
+  color: var(--text-normal, #bebebe);
+}
+
+/* Toggle moon must NOT be flex-centered — Vue offsets with margin on the svg */
+.toggler .slider {
+  display: block;
+  overflow: visible;
+}
+
+.toggler .slider svg {
+  display: block;
+  fill: yellow;
+  margin: 7px 0 0 7px;
+}
+
+/* header-controls wraps ThemeToggle in a span — don't stretch the pill */
+.header-controls .ob-drop-shadow {
+  display: inline-flex;
+  align-items: center;
+  padding-right: 0.5rem;
+}
+
+.header-controls .ob-drop-shadow:hover {
+  opacity: 1;
+}
+
+/* SvgIcon (from Vue SvgIcon/index.vue) */
+#__svg__icons__dom__ {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.svg-icon {
+  vertical-align: -0.15em;
+  overflow: hidden;
+  display: inline;
+  position: relative;
+}
+
+.external-icon svg {
+  fill: currentColor;
+  stroke: currentColor;
+}
+
+.svg-external-icon {
+  background-color: currentColor;
+  mask-size: cover !important;
+  display: inline-block;
+}
+
+/* Light theme is missing --background-blur in the original extract. */
+.theme-light {
+  --background-blur: rgba(0, 0, 0, 0.09);
+}
+
+/* Profile.vue scoped — lifts avatar onto the gradient cut edge */
+.profile {
+  top: -7%;
+  height: 100%;
+  max-height: 100%;
+}
+
+.ob-avatar {
+  object-fit: cover;
+  display: block;
+}
+
+/*
+ * Banner positioning: absolute layers attach to .app-wrapper (full viewport width)
+ * so the upper half is covered edge-to-edge, including under the sticky header.
+ * Vue keeps banners in .app-container; we lift them for the same visual result
+ * once the header sits above a transparent band of wrapper bg.
+ */
+.app-wrapper {
+  position: relative;
+}
+
+.app-wrapper > .app-banner {
+  pointer-events: none;
+}
+
+/* Light: full-bleed soft gradient (reset dark-theme centering/blur leftovers) */
+.theme-light .app-banner-screen,
+.app-wrapper.theme-light .app-banner-screen {
+  left: 0;
+  transform: none;
+  width: 100%;
+  height: 600px;
+  border-radius: 0;
+  filter: none;
+}
+
+/* Dark: centered blurred strip relative to the full wrapper */
+.app-wrapper.theme-dark .app-banner-screen {
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%;
+  height: 400px;
+}
+
+/* Dropdown (Vue DropdownMenu / DropdownItem) */
+.ob-dropdown .dropdown-menu {
+  position: absolute;
+  right: 0;
+  z-index: 60;
+  margin-top: 0.5rem;
+  width: 12rem;
+  transform-origin: top right;
+  border-radius: 0.5rem;
+  background-color: var(--background-primary);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-5px);
+  transition: all 0.2s;
+}
+
+.ob-dropdown.open .dropdown-menu,
+.ob-dropdown:hover .dropdown-menu.hover-mode {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.ob-dropdown .dropdown-item {
+  display: block;
+  cursor: pointer;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+  padding: 0.25rem 1rem;
+  font-weight: 500;
+  color: var(--text-bright);
+}
+
+.ob-dropdown .dropdown-item:hover,
+.ob-dropdown .dropdown-item.active {
+  background-color: var(--background-trans);
+  color: var(--text-bright);
+}
+
+/* Breadcrumbs (Vue Breadcrumbs.vue) */
+.breadcrumbs {
+  position: relative;
+  z-index: 20;
+}
+.breadcrumbs li {
+  position: relative;
+  z-index: 20;
+}
+.breadcrumbs li:after {
+  content: '>';
+  position: absolute;
+  top: 0.05rem;
+  right: -0.95rem;
+  opacity: 0.65;
+}
+.breadcrumbs li:last-of-type:after {
+  content: '';
+}
+
+/* PageContent title clamp */
+.post-header .post-title {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  font-size: clamp(1.2rem, calc(1rem + 3.5vw), 3rem);
+  text-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
+  line-height: 1.1;
+}
+
+/* Article cards need an intrinsic height for the 3-row grid. */
+.article-container > .article {
+  min-height: 28rem;
+}
+
+@media (min-width: 1024px) {
+  #feature .article-container {
+    margin-bottom: 0;
+  }
+}
+
+/* Mobile menu (scoped in Vue). */
+.App-Mobile-sidebar {
+  z-index: 9999;
+}
+
+.App-Mobile-blur {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: none;
+  height: 100%;
+  width: 100%;
+  backdrop-filter: blur(24px);
+  background: var(--background-blur);
+  z-index: 1001;
+}
+
+.App-Mobile-blur.visible {
+  display: flex;
+  animation: opacity_show 0.85s ease 0s 1 normal none running;
+}
+
+.App-Mobile-wrapper {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1002;
+  display: flex;
+  height: 100%;
+  width: 80%;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: var(--background-primary);
+  padding: 2rem 1.5rem 2rem 1rem;
+  opacity: 0;
+  transform: translate3d(100%, 0, 0);
+  transition: transform 0.65s ease;
+}
+
+.App-Mobile-wrapper.open-menu {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+@keyframes opacity_hide {
+  0% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

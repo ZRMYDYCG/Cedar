@@ -1,0 +1,57 @@
+{
+  "name": "cedar-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev --turbopack",
+    "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev --turbopack",
+    "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
+    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
+    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
+    "styles:aurora": "sass ../hexo-theme-aurora/build/aurora-extract.scss ../hexo-theme-aurora/build/aurora-sass.css --no-source-map && tailwindcss -c ../hexo-theme-aurora/tailwind.config.js -i ../hexo-theme-aurora/build/aurora-sass.css -o ./src/styles/aurora.css --minify",
+    "icons:sprite": "node ./scripts/generate-svg-sprite.mjs",
+    "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run ./scripts/seed.ts",
+    "clear:demo": "cross-env NODE_OPTIONS=--no-deprecation payload run ./scripts/clear-demo.ts",
+    "predev": "pnpm icons:sprite",
+    "prebuild": "pnpm icons:sprite"
+  },
+  "dependencies": {
+    "@payloadcms/db-vercel-postgres": "^3.82.1",
+    "@payloadcms/next": "^3.82.1",
+    "@payloadcms/richtext-lexical": "^3.82.1",
+    "@payloadcms/storage-vercel-blob": "^3.82.1",
+    "@payloadcms/ui": "^3.82.1",
+    "@tanstack/react-form": "^1.12.0",
+    "@tanstack/react-query": "^5.80.0",
+    "@tanstack/react-table": "^8.21.0",
+    "@tanstack/react-virtual": "^3.13.0",
+    "cross-env": "^10.1.0",
+    "graphql": "^16.8.1",
+    "gsap": "^3.13.0",
+    "next": "15.4.11",
+    "next-intl": "^4.1.0",
+    "payload": "^3.82.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "sharp": "^0.34.2",
+    "zustand": "^5.0.5"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.11",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}
