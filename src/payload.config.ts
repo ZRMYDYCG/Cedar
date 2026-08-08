@@ -44,7 +44,10 @@ export default buildConfig({
     prodMigrations: migrations,
     pool: connectionString
       ? {
-          connectionString
+          connectionString,
+          // Fail fast instead of hanging the Vercel function until timeout.
+          connectionTimeoutMillis: 8_000,
+          max: 5
         }
       : undefined
   }),
