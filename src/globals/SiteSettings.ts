@@ -27,7 +27,7 @@ export const SiteSettings: GlobalConfig = {
       type: 'text',
       label: '昵称',
       admin: {
-        description: '朋友圈封面、Logo 副标题等'
+        description: '人生小记封面、Logo 副标题等'
       }
     },
     {
@@ -35,7 +35,7 @@ export const SiteSettings: GlobalConfig = {
       type: 'textarea',
       label: '个性签名',
       admin: {
-        description: '侧边栏简介、朋友圈签名等'
+        description: '侧边栏简介、人生小记签名等'
       }
     }
   ]

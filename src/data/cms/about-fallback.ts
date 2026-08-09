@@ -27,7 +27,7 @@ export function buildAboutFallbackHtml(
   const parts = [
     `<p>${nameLine}</p>`,
     subtitle ? `<p>${escapeHtml(subtitle)}。</p>` : '',
-    '<p>这里是我的个人站点 Cedar：记一点笔记，晒一点朋友圈，把技术与日常慢慢留下。</p>',
+    '<p>这里是我的个人站点 Cedar：记一点笔记，记一些碎碎念，把技术与日常慢慢留下。</p>',
     github
       ? `<p>也可以在 <a href="${escapeHtml(github)}" target="_blank" rel="noopener noreferrer">GitHub</a> 找到我。</p>`
       : ''

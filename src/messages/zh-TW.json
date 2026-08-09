@@ -6,7 +6,7 @@
     "categories": "分類",
     "tags": "標簽",
     "post": "文章",
-    "moments": "朋友圈",
+    "moments": "人生小記",
     "links": "友鏈",
     "message-board": "留言闆",
     "search": "搜索結果",
@@ -17,7 +17,7 @@
     "editors-selection": "編輯精選"
   },
   "moments": {
-    "cover-label": "朋友圈封面",
+    "cover-label": "人生小記封面",
     "view-image": "查看第 {index} 張圖片",
     "preview-label": "圖片預覽",
     "close": "關閉",
@@ -94,7 +94,7 @@
     "empty-posts": "目前還沒有文章",
     "empty-archives": "目前還沒有歸檔內容",
     "empty-moments": "還沒有動態",
-    "empty-moments-hint": "在 Payload Admin 打開「朋友圈」，新建並發佈。",
+    "empty-moments-hint": "在 Payload Admin 打開「人生小記」，新建並發佈。",
     "empty-links": "目前還沒有友情連結",
     "empty-links-hint": "歡迎交換友鏈，在下方留言區提交申請。",
     "links-apply-guide": "歡迎交換友鏈。請在申請時附上站點名稱、簡介與頭像地址。",

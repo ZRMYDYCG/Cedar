@@ -61,13 +61,13 @@ async function assertMomentImagesExist(
 export const Moments: CollectionConfig = {
   slug: 'moments',
   labels: {
-    singular: '动态',
-    plural: '朋友圈'
+    singular: '小记',
+    plural: '人生小记'
   },
   admin: {
     useAsTitle: 'content',
     defaultColumns: ['content', 'publishedAt', '_status'],
-    description: '微信朋友圈式动态：文案 + 最多 9 张图'
+    description: '人生小记：文案 + 最多 9 张图'
   },
   versions: {
     drafts: true

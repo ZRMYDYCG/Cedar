@@ -6,7 +6,7 @@
     "categories": "Categories",
     "tags": "Tags",
     "post": "Article",
-    "moments": "Moments",
+    "moments": "Life Notes",
     "links": "Friends",
     "search": "Search results",
     "message-board": "Message Board",
@@ -17,7 +17,7 @@
     "editors-selection": "Editor's Selection"
   },
   "moments": {
-    "cover-label": "Moments cover",
+    "cover-label": "Life Notes cover",
     "view-image": "View image {index}",
     "preview-label": "Image preview",
     "close": "Close",
@@ -94,7 +94,7 @@
     "empty-posts": "No posts yet.",
     "empty-archives": "No archives yet.",
     "empty-moments": "No moments yet.",
-    "empty-moments-hint": "Open Moments in Payload Admin, create one, then publish it.",
+    "empty-moments-hint": "Open Life Notes in Payload Admin, create one, then publish it.",
     "empty-links": "No friend links yet.",
     "empty-links-hint": "Want to exchange links? Leave a request in the comments below.",
     "links-apply-guide": "Want to exchange links? Include your site name, bio, and avatar URL in the request.",

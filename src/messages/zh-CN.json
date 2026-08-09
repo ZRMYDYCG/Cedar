@@ -6,7 +6,7 @@
     "categories": "分类",
     "tags": "标签",
     "post": "文章",
-    "moments": "朋友圈",
+    "moments": "人生小记",
     "links": "友链",
     "message-board": "留言板",
     "search": "搜索结果",
@@ -17,7 +17,7 @@
     "editors-selection": "编辑精选"
   },
   "moments": {
-    "cover-label": "朋友圈封面",
+    "cover-label": "人生小记封面",
     "view-image": "查看第 {index} 张图片",
     "preview-label": "图片预览",
     "close": "关闭",
@@ -94,7 +94,7 @@
     "empty-posts": "目前还没有文章",
     "empty-archives": "目前还没有归档内容",
     "empty-moments": "还没有动态",
-    "empty-moments-hint": "在 Payload Admin 打开「朋友圈」，新建并发布。",
+    "empty-moments-hint": "在 Payload Admin 打开「人生小记」，新建并发布。",
     "empty-links": "目前还没有友情链接",
     "empty-links-hint": "欢迎交换友链，在下方留言区提交申请。",
     "links-apply-guide": "欢迎交换友链。请在申请时附上站点名称、简介与头像地址。",
