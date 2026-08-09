@@ -136,8 +136,8 @@ Gitee Contents API 最终文件需 ≤ **2MB**。上传时会用 sharp 自动压
 1. 数据库连不上或 `PAYLOAD_SECRET` 为空  
 2. **生产库还没建表**：Postgres 在生产不会自动 `push`。确认 Build Command 是 `pnpm run ci`，且构建日志跑过 `payload migrate`。缺 migration 时本地执行 `pnpm payload migrate:create` 后重新部署。
 
-**上传图片失败 / `ERR_CONNECTION_CLOSED` / Admin 报 `reading 'doc'`**  
-→ 多为 Vercel 函数超时（504）或上传后二次 `payload.update` 在慢 Gitee 请求后 Not Found。当前策略：入库前压成约 ≤512KB WebP，Gitee 上传后不再 update。重新部署后再试。其它常见原因：
+**上传图片失败 / `ERR_CONNECTION_CLOSED` / Admin 报 `reading 'doc'` / `document with ID N could not be found`**  
+→ 常见链路：上传超时或 **filename 唯一冲突**（同名转 WebP）导致 Media 未入库，但 Admin 仍握着失效 ID。当前会压图并给文件名加随机后缀。请删掉失效图后重新上传。其它原因：
 1. 未配齐 `GITEE_OWNER` / `GITEE_REPO` / `GITEE_TOKEN`，或 Token 无仓库写权限  
 2. 文件超过 **2MB**（硬限制；上传会尽量压到约 512KB）  
 3. `413` / `FUNCTION_PAYLOAD_TOO_LARGE`：仍可能被 Vercel 函数体限制挡住，请先压图  

@@ -1,3 +1,4 @@
+import { randomBytes } from 'crypto'
 import path from 'path'
 import sharp from 'sharp'
 
@@ -18,15 +19,27 @@ type PreparedFile = {
   height?: number
 }
 
-function withExt(filename: string, ext: string): string {
+/**
+ * media.filename has a UNIQUE index. Converting many uploads to the same
+ * basename.webp (or re-uploading the same WeChat export name) caused
+ * "Value must be unique" — Admin then kept a ghost ID that 404s on open.
+ */
+function uniqueFilename(filename: string, ext?: string): string {
   const parsed = path.parse(filename)
-  return `${parsed.name}${ext}`
+  const suffix = randomBytes(4).toString('hex')
+  const resolvedExt = ext ?? parsed.ext ?? ''
+  const withDot = resolvedExt
+    ? resolvedExt.startsWith('.')
+      ? resolvedExt
+      : `.${resolvedExt}`
+    : ''
+  return `${parsed.name}-${suffix}${withDot}`
 }
 
 /**
  * Compress / resize raster images for fast Gitee Contents API uploads.
- * SVG/GIF pass through unchanged (with hard size check).
- * Other rasters are converted to WebP and aimed at TARGET_UPLOAD_BYTES.
+ * SVG/GIF pass through (size-checked) with a unique filename.
+ * Other rasters become uniquely-named WebP aimed at TARGET_UPLOAD_BYTES.
  */
 export async function prepareUploadBuffer(file: {
   buffer: Buffer
@@ -46,7 +59,7 @@ export async function prepareUploadBuffer(file: {
         `File too large (${buffer.byteLength} bytes). Max ${MAX_UPLOAD_BYTES} bytes for Gitee storage.`
       )
     }
-    return { buffer, filename, mimeType }
+    return { buffer, filename: uniqueFilename(filename), mimeType }
   }
 
   if (buffer.byteLength > MAX_INPUT_BYTES) {
@@ -55,17 +68,23 @@ export async function prepareUploadBuffer(file: {
     )
   }
 
-  // Already a small webp — skip re-encode for speed.
+  // Already a small webp — keep bytes, still uniquify name to avoid collisions.
   if (
     mimeType === 'image/webp' &&
     buffer.byteLength <= TARGET_UPLOAD_BYTES
   ) {
-    return { buffer, filename, mimeType }
+    return {
+      buffer,
+      filename: uniqueFilename(filename, '.webp'),
+      mimeType
+    }
   }
 
   const qualities = [78, 68, 58, 48, 38]
   let lastError: unknown
   let smallest: PreparedFile | undefined
+  // One unique name for this encode pass so quality retries don't invent new names.
+  const webpName = uniqueFilename(filename, '.webp')
 
   for (const quality of qualities) {
     try {
@@ -83,7 +102,7 @@ export async function prepareUploadBuffer(file: {
 
       const candidate: PreparedFile = {
         buffer: out.data,
-        filename: withExt(filename, '.webp'),
+        filename: webpName,
         mimeType: 'image/webp',
         width: out.info.width || meta.width,
         height: out.info.height || meta.height
