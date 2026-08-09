@@ -1,9 +1,9 @@
 import { paragraphLexical } from '@/data/cms/map-post'
 import { safeCms } from '@/data/cms/safe'
+import { lexicalToHtml } from '@/lib/lexical-html'
 import { getPayloadClient } from '@/lib/payload'
 import { decodePathSegment } from '@/lib/path-segment'
 import type { Page } from '@/payload-types'
-import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 
 export type CmsPage = {
   title: string
@@ -33,7 +33,7 @@ export async function getPageBySlug(slug: string): Promise<CmsPage | null> {
       return {
         title: page.title,
         slug: page.slug,
-        html: convertLexicalToHTML({ data: page.content })
+        html: lexicalToHtml(page.content)
       }
     },
     null

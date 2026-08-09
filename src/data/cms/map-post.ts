@@ -1,7 +1,7 @@
 import { siteConfig } from '@/config/site-config'
+import { lexicalToHtml } from '@/lib/lexical-html'
 import type { Category, Media, Post, Tag, User } from '@/payload-types'
 import type { PostCard, PostDate, PostTaxonomy } from '@/types/post'
-import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 
 type SiteProfile = Pick<
   (typeof siteConfig)['site'],
@@ -81,11 +81,21 @@ function lexicalToPlainText(node: unknown): string {
     type?: unknown
     children?: unknown
     root?: unknown
+    fields?: { code?: unknown }
   }
 
   // Serialized editor state is `{ root: { children: [...] } }`.
   if (value.root) {
     return lexicalToPlainText(value.root)
+  }
+
+  // Lexical Code blocks store source in `fields.code`.
+  if (
+    value.type === 'block' &&
+    typeof value.fields?.code === 'string' &&
+    value.fields.code
+  ) {
+    return `${value.fields.code} `
   }
 
   if (typeof value.text === 'string' && value.text) {
@@ -122,9 +132,7 @@ export function mapPostToCard(
 ): PostCardWithHtml {
   const site = options.site || siteConfig.site
   const excerpt = (post.excerpt || '').trim()
-  const html = options.withHtml
-    ? convertLexicalToHTML({ data: post.content })
-    : undefined
+  const html = options.withHtml ? lexicalToHtml(post.content) : undefined
   // List cards used to leave `text` empty when excerpt was missing and
   // withHtml was false — ArticleCard then showed a permanent skeleton.
   const fromBody = truncatePlain(lexicalToPlainText(post.content))

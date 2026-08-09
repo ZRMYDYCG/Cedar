@@ -1,9 +1,32 @@
 import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import {
+  BlocksFeature,
+  CodeBlock,
+  lexicalEditor
+} from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
 import sharp from 'sharp'
 import { fileURLToPath } from 'url'
+
+/** Curated languages for the CMS Code block (Monaco keys). */
+const codeBlockLanguages = {
+  typescript: 'TypeScript',
+  javascript: 'JavaScript',
+  html: 'HTML',
+  css: 'CSS',
+  scss: 'SCSS',
+  json: 'JSON',
+  shell: 'Shell',
+  python: 'Python',
+  go: 'Go',
+  rust: 'Rust',
+  java: 'Java',
+  sql: 'SQL',
+  yaml: 'YAML',
+  markdown: 'Markdown',
+  plaintext: 'Plain Text'
+}
 
 import { Categories } from './collections/Categories'
 import { Comments } from './collections/Comments'
@@ -65,7 +88,20 @@ export default buildConfig({
     Comments
   ],
   globals: [SiteSettings],
-  editor: lexicalEditor(),
+  editor: lexicalEditor({
+    features: ({ defaultFeatures }) => [
+      ...defaultFeatures,
+      BlocksFeature({
+        blocks: [
+          CodeBlock({
+            slug: 'code',
+            defaultLanguage: 'typescript',
+            languages: codeBlockLanguages
+          })
+        ]
+      })
+    ]
+  }),
   secret: env('PAYLOAD_SECRET') || 'INSECURE_MISSING_PAYLOAD_SECRET',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts')
