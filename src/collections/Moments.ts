@@ -1,4 +1,62 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, PayloadRequest } from 'payload'
+import { ValidationError } from 'payload'
+
+function mediaIdFrom(value: unknown): number | string | null {
+  if (value == null) return null
+  if (typeof value === 'number' || typeof value === 'string') return value
+  if (typeof value === 'object' && value !== null && 'id' in value) {
+    const id = (value as { id?: number | string }).id
+    return id == null ? null : id
+  }
+  return null
+}
+
+async function assertMomentImagesExist(
+  images: unknown,
+  req: PayloadRequest
+): Promise<void> {
+  if (!Array.isArray(images) || images.length === 0) return
+
+  const errors: { message: string; path: string }[] = []
+
+  await Promise.all(
+    images.map(async (row, index) => {
+      const id = mediaIdFrom(
+        row && typeof row === 'object' ? (row as { image?: unknown }).image : null
+      )
+      if (id == null) {
+        errors.push({
+          path: `images.${index}.image`,
+          message: '请上传图片'
+        })
+        return
+      }
+
+      try {
+        await req.payload.findByID({
+          collection: 'media',
+          id,
+          depth: 0,
+          overrideAccess: true,
+          req
+        })
+      } catch {
+        errors.push({
+          path: `images.${index}.image`,
+          message: '图片已失效（多为上次上传失败留下的无效引用），请移除后重新上传'
+        })
+      }
+    })
+  )
+
+  if (errors.length > 0) {
+    throw new ValidationError({
+      collection: 'moments',
+      errors,
+      req
+    })
+  }
+}
 
 export const Moments: CollectionConfig = {
   slug: 'moments',
@@ -34,7 +92,8 @@ export const Moments: CollectionConfig = {
         plural: '图片'
       },
       admin: {
-        description: '最多 9 张，前台按微信朋友圈九宫格展示'
+        description:
+          '最多 9 张。若保存提示图片失效，请删掉该图重新上传（不要沿用上传失败时的预览）。'
       },
       fields: [
         {
@@ -66,6 +125,14 @@ export const Moments: CollectionConfig = {
     }
   ],
   hooks: {
+    beforeValidate: [
+      async ({ data, req }) => {
+        if (data?.images) {
+          await assertMomentImagesExist(data.images, req)
+        }
+        return data
+      }
+    ],
     beforeChange: [
       ({ data, operation }) => {
         if (data && operation === 'create' && !data.publishedAt) {
