@@ -4,10 +4,11 @@ import { getFileKey, getFilePrefix } from '@payloadcms/plugin-cloud-storage/util
 import {
   deleteGiteeFile,
   fetchGiteeRaw,
+  GiteeStorageError,
   type GiteeConfig,
   uploadGiteeFile
 } from './client'
-import { prepareUploadBuffer } from './optimize'
+import { MAX_UPLOAD_BYTES } from './constants'
 
 type CreateGiteeAdapterArgs = {
   config: GiteeConfig
@@ -42,28 +43,30 @@ export function createGiteeAdapter({
   return ({ collection, prefix: collectionPrefix = '' }): GeneratedAdapter => ({
     name: 'gitee',
     handleUpload: async ({ data, file }) => {
-      // Prefer already-normalized bytes from Media beforeChange; still safe-guard here.
-      const prepared = await prepareUploadBuffer({
-        buffer: file.buffer,
-        filename: file.filename,
-        mimeType: file.mimeType
-      })
+      // Media.beforeChange already compressed + uniquified filename into
+      // req.file / data.filename. Do NOT call prepareUploadBuffer again —
+      // uniqueFilename() would invent a second name, upload that to Gitee,
+      // and leave the DB pointing at a missing object (frontend 404).
+      const buffer = Buffer.isBuffer(file.buffer)
+        ? file.buffer
+        : Buffer.from(file.buffer)
 
-      file.buffer = prepared.buffer
-      file.filename = prepared.filename
-      file.mimeType = prepared.mimeType
-      file.filesize = prepared.buffer.byteLength
+      if (buffer.byteLength > MAX_UPLOAD_BYTES) {
+        throw new GiteeStorageError(
+          `File exceeds ${MAX_UPLOAD_BYTES} byte limit for Gitee Contents API`
+        )
+      }
 
       const { fileKey } = getFileKey({
         collectionPrefix,
         docPrefix: data.prefix,
-        filename: prepared.filename
+        filename: file.filename
       })
 
       await uploadGiteeFile({
         config,
         filePath: fileKey,
-        buffer: prepared.buffer,
+        buffer,
         message: `upload ${fileKey}`
       })
 
