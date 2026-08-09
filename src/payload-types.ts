@@ -241,7 +241,7 @@ export interface Tag {
   createdAt: string;
 }
 /**
- * 微信朋友圈式动态：文案 + 最多 9 张图
+ * 人生小记：文案 + 最多 9 张图
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "moments".
@@ -550,11 +550,11 @@ export interface SiteSetting {
    */
   author?: string | null;
   /**
-   * 朋友圈封面、Logo 副标题等
+   * 人生小记封面、Logo 副标题等
    */
   nick?: string | null;
   /**
-   * 侧边栏简介、朋友圈签名等
+   * 侧边栏简介、人生小记签名等
    */
   subtitle?: string | null;
   updatedAt?: string | null;
