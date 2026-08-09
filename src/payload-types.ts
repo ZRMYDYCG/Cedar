@@ -250,7 +250,7 @@ export interface Moment {
   id: number;
   content: string;
   /**
-   * 最多 9 张，前台按微信朋友圈九宫格展示
+   * 最多 9 张。若保存提示图片失效，请删掉该图重新上传（不要沿用上传失败时的预览）。
    */
   images?:
     | {
