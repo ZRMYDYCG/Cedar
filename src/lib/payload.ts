@@ -2,19 +2,29 @@ import config from '@payload-config'
 import { getPayload, type Payload } from 'payload'
 import { cache } from 'react'
 
-const INIT_TIMEOUT_MS = 10_000
+const INIT_TIMEOUT_MS = 30_000
+
+/** Process-wide singleton — React `cache()` only dedupes within one request. */
+let payloadPromise: Promise<Payload> | null = null
+
+function initPayload(): Promise<Payload> {
+  if (!payloadPromise) {
+    payloadPromise = getPayload({ config }).catch((err) => {
+      payloadPromise = null
+      throw err
+    })
+  }
+  return payloadPromise
+}
 
 export const getPayloadClient = cache(async (): Promise<Payload> => {
-  if (
-    !process.env.POSTGRES_URL &&
-    !process.env.DATABASE_URL
-  ) {
+  if (!process.env.POSTGRES_URL && !process.env.DATABASE_URL) {
     throw new Error(
       'Missing POSTGRES_URL (or DATABASE_URL). Add it in Vercel → Settings → Environment Variables.'
     )
   }
 
-  const init = getPayload({ config })
+  const init = initPayload()
   let timer: ReturnType<typeof setTimeout> | undefined
 
   try {

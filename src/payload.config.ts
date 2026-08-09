@@ -1,6 +1,5 @@
 import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
 import { buildConfig } from 'payload'
 import sharp from 'sharp'
@@ -13,6 +12,7 @@ import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Tags } from './collections/Tags'
 import { Users } from './collections/Users'
+import { getGiteeConfig, giteeStorage } from './storage/gitee'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -23,7 +23,7 @@ function env(name: string): string | undefined {
   return typeof value === 'string' && value.length > 0 ? value : undefined
 }
 
-const blobToken = env('BLOB_READ_WRITE_TOKEN')
+const giteeConfig = getGiteeConfig()
 const connectionString = env('POSTGRES_URL') || env('DATABASE_URL') || ''
 
 if (!env('PAYLOAD_SECRET')) {
@@ -32,12 +32,12 @@ if (!env('PAYLOAD_SECRET')) {
   )
 }
 
-if (!blobToken) {
+if (!giteeConfig) {
   console.warn(
-    '[Cedar] BLOB_READ_WRITE_TOKEN missing — media uploads will hit Vercel 4.5MB limit (413)'
+    '[Cedar] GITEE_OWNER / GITEE_REPO / GITEE_TOKEN missing — media uploads use local disk (not durable on Vercel)'
   )
 } else {
-  console.info('[Cedar] Vercel Blob clientUploads enabled')
+  console.info('[Cedar] Gitee media storage enabled')
 }
 
 export default buildConfig({
@@ -56,7 +56,9 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts')
   },
   db: vercelPostgresAdapter({
-    // Create tables on first production boot when Neon/Postgres is empty.
+    // Use migrations only — interactive drizzle "push" hangs Next.js
+    // when cloud-storage adds fields like media.prefix.
+    push: false,
     prodMigrations: migrations,
     pool: connectionString
       ? {
@@ -69,14 +71,12 @@ export default buildConfig({
   }),
   sharp,
   plugins: [
-    vercelBlobStorage({
-      // Bypass Vercel ~4.5MB function body limit (otherwise large uploads → 413)
-      clientUploads: true,
+    giteeStorage({
       collections: {
-        media: true
+        // Store under media/ in the Gitee repo
+        media: { prefix: 'media' }
       },
-      enabled: Boolean(blobToken),
-      token: blobToken
+      enabled: Boolean(giteeConfig)
     })
   ]
 })

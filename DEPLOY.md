@@ -2,7 +2,7 @@
 
 仓库：[ZRMYDYCG/Cedar](https://github.com/ZRMYDYCG/Cedar)
 
-推荐平台：**Vercel**（已使用 `@payloadcms/db-vercel-postgres` + Vercel Blob）。
+推荐平台：**Vercel**（Postgres 用 `@payloadcms/db-vercel-postgres`；媒体走 Gitee 私有仓库 + 本站代理）。
 
 ---
 
@@ -15,7 +15,9 @@
               ↓
          Vercel Postgres / Neon
               ↓
-         Vercel Blob（封面 / 附件）
+         Gitee 私有仓库（封面 / 附件）
+              ↑
+         /api/media/file/... 代理读图（规避防盗链）
 ```
 
 日常发文只走 `/admin`，**不必重新部署**。改代码才 `git push` 触发构建。
@@ -35,16 +37,19 @@
 
 ---
 
-## 二、创建托管资源（Storage）
+## 二、创建托管资源
 
-在 Vercel 项目 → **Storage**：
+### Postgres
 
-| 资源 | 用途 | 环境变量 |
-|------|------|----------|
-| **Postgres**（Neon 或 Vercel Postgres） | Payload 数据 | `POSTGRES_URL` |
-| **Blob** | 图片 / 媒体上传 | `BLOB_READ_WRITE_TOKEN` |
+在 Vercel 项目 → **Storage** 创建 **Postgres**（Neon 或 Vercel Postgres），环境变量 `POSTGRES_URL` 一般会自动注入；确认 **Production**（和 Preview，如需要）都勾选了。
 
-创建后一般会自动注入到项目环境变量；确认 **Production**（和 Preview，如需要）都勾选了。
+### Gitee 图床（手工）
+
+1. 在 Gitee 新建一个**私有**空仓库（例如 `cedar-assets`）
+2. 账号设置 → 私人令牌，勾选仓库 `projects` 权限，生成 `GITEE_TOKEN`
+3. 将 owner / repo / token 配到 Vercel 环境变量（见下表）
+
+Gitee Contents API 最终文件需 ≤ **2MB**。上传时会用 sharp 自动压缩/转 WebP（原图可到约 40MB）；SVG/GIF 不压缩，仍须 ≤2MB。
 
 ---
 
@@ -55,7 +60,10 @@
 | 变量 | 说明 | 示例 |
 |------|------|------|
 | `POSTGRES_URL` | 数据库连接串 | Storage 自动注入 |
-| `BLOB_READ_WRITE_TOKEN` | Blob 读写令牌 | Storage 自动注入 |
+| `GITEE_OWNER` | Gitee 用户名或组织 | `your-name` |
+| `GITEE_REPO` | 私有资源仓库名 | `cedar-assets` |
+| `GITEE_TOKEN` | Gitee 私人令牌 | `xxxxxxxx` |
+| `GITEE_BRANCH` | 可选，默认 `master` | `master` |
 | `PAYLOAD_SECRET` | Payload 加密密钥（**生产专用长随机串**） | `openssl rand -base64 32` |
 | `NEXT_PUBLIC_SERVER_URL` | 站点公网地址 | `https://cedar-xxx.vercel.app` |
 
@@ -63,7 +71,7 @@
 
 - `PAYLOAD_SECRET` **不要**用本地 `.env` 里那串
 - 自定义域名绑定后，把 `NEXT_PUBLIC_SERVER_URL` 改成 `https://你的域名` 并 **Redeploy**
-
+- 不再需要 `BLOB_READ_WRITE_TOKEN`
 ---
 
 ## 四、首次部署
@@ -110,7 +118,7 @@
 | 项 | 本地 | 线上 |
 |----|------|------|
 | 数据库 | Docker Postgres | Vercel Postgres / Neon |
-| 媒体 | 本地 `media/`（已 gitignore） | Vercel Blob |
+| 媒体 | 配齐 `GITEE_*` 后走 Gitee；未配置则本地 `media/` | Gitee 私有仓库 + `/api/media/file` 代理 |
 | 密钥 | `.env`（不进仓库） | Vercel Env Vars |
 | 地址 | `http://localhost:3000` | `NEXT_PUBLIC_SERVER_URL` |
 
@@ -130,9 +138,10 @@
 
 **上传图片失败**  
 → 常见原因：
-1. 未配 `BLOB_READ_WRITE_TOKEN`，或 Blob 未绑定到该项目（Production 的 Build + Runtime 都要勾）  
-2. Blob store 必须是 **Public**（Payload 的 Vercel Blob 适配器不支持 Private）  
-3. `413` / `FUNCTION_PAYLOAD_TOO_LARGE`：大文件仍走了服务端。仓库已开 `clientUploads: true` 且关闭了 Media 裁剪。部署后请 **硬刷新 Admin**（或清缓存）再传；Vercel 函数日志应出现 `[Cedar] Vercel Blob clientUploads enabled`。临时也可先压图到 4MB 以下。
+1. 未配齐 `GITEE_OWNER` / `GITEE_REPO` / `GITEE_TOKEN`，或 Token 无仓库写权限  
+2. 文件超过 **2MB**（Gitee Contents API 限制；请先压图）  
+3. `413` / `FUNCTION_PAYLOAD_TOO_LARGE`：仍可能被 Vercel 函数体限制挡住，请压到 2MB 以下  
+4. 构建/运行日志应出现 `[Cedar] Gitee media storage enabled`；若出现 missing 警告则环境变量未注入
 
 **前台看不到文章**  
 → 确认 Admin 里状态是 **Published**（草稿不会出现在前台）。
@@ -146,8 +155,8 @@
 
 - [ ] GitHub 仓库已推送：`ZRMYDYCG/Cedar`
 - [ ] Vercel 已 Import 并关联仓库
-- [ ] Postgres + Blob 已创建并连接到项目
-- [ ] 四个环境变量已配置（含生产专用 `PAYLOAD_SECRET`）
+- [ ] Postgres 已创建并连接到项目
+- [ ] Gitee 私有仓库 + `GITEE_*` / `PAYLOAD_SECRET` / `NEXT_PUBLIC_SERVER_URL` 已配置
 - [ ] 已提交 `src/migrations/`，Build Command 为 `pnpm run ci`
 - [ ] 首次 Deploy 成功（日志含 migrate）
 - [ ] `/admin` 已创建管理员

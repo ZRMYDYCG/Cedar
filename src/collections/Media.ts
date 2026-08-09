@@ -13,8 +13,9 @@ export const Media: CollectionConfig = {
     }
   ],
   upload: {
-    // Avoid Admin crop UI; large cropped multipart POSTs hit Vercel 4.5MB limit.
+    // Gitee Contents API + Vercel function body: keep uploads small (enforced in adapter, 2MB).
     crop: false,
-    focalPoint: false
+    focalPoint: false,
+    mimeTypes: ['image/*']
   }
 }

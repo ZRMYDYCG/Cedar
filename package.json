@@ -23,8 +23,8 @@
   "dependencies": {
     "@payloadcms/db-vercel-postgres": "^3.82.1",
     "@payloadcms/next": "^3.82.1",
+    "@payloadcms/plugin-cloud-storage": "3.87.1",
     "@payloadcms/richtext-lexical": "^3.82.1",
-    "@payloadcms/storage-vercel-blob": "^3.82.1",
     "@payloadcms/ui": "^3.82.1",
     "@tanstack/react-form": "^1.12.0",
     "@tanstack/react-query": "^5.80.0",

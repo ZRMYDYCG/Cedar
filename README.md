@@ -5,7 +5,7 @@ Personal site / blog — Next.js App Router + Payload CMS.
 ## Stack
 
 - Next.js App Router + Tailwind CSS v4
-- Payload CMS + Postgres (+ Vercel Blob in production)
+- Payload CMS + Postgres (+ Gitee private repo for media in production)
 - Zustand, TanStack Query / Form / Table / Virtual
 - GSAP, next-intl (en / zh-CN / zh-TW)
 
@@ -36,4 +36,4 @@ pnpm clear:demo  # wipe demo content
 
 ## Notes
 
-- `.env`: `POSTGRES_URL`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`
+- `.env`: `POSTGRES_URL`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`, and for media uploads `GITEE_OWNER` / `GITEE_REPO` / `GITEE_TOKEN`
