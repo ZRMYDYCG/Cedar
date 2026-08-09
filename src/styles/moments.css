@@ -1,0 +1,322 @@
+/* WeChat Moments — classic cover (图一) */
+
+.moments-shell {
+  position: relative;
+  width: min(100%, 36rem);
+  margin: 1.25rem auto 0;
+  padding-bottom: 4rem;
+}
+
+.moments-hero {
+  position: relative;
+  z-index: 4;
+  /* no solid under-band — page background shows through */
+  background: transparent;
+}
+
+.moments-cover {
+  position: relative;
+  height: min(22rem, max(15rem, 54vw));
+  background: #1c1c1e;
+  overflow: hidden;
+}
+
+.moments-cover-photo {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.moments-cover-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 55%,
+    rgb(0 0 0 / 0.45) 100%
+  );
+}
+
+/* In-flow meta: negative margin pulls avatar onto the cover, no gray bar */
+.moments-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+  padding: 0 0.85rem;
+  margin-top: -3.25rem;
+}
+
+.moments-cover-identity {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+
+.moments-cover-name {
+  margin: 0 0 2.35rem;
+  color: #fff;
+  font-size: 1.08rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  text-shadow: 0 1px 8px rgb(0 0 0 / 0.55);
+  white-space: nowrap;
+}
+
+.moments-cover-avatar {
+  display: block;
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 0.4rem;
+  object-fit: cover;
+  background: #3a3a3c;
+  border: 2px solid rgb(255 255 255 / 0.92);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.28);
+}
+
+.moments-signature {
+  margin: 0;
+  padding: 0;
+  max-width: 16rem;
+  text-align: right;
+  color: #aeaeb2;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.theme-light .moments-signature {
+  color: #8e8e93;
+}
+
+.moments-feed {
+  margin-top: 0.65rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.moment-item {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  gap: 0.7rem 0.75rem;
+  padding: 1rem 0 1.1rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--text-bright) 7%, transparent);
+}
+
+.moment-item:last-child {
+  border-bottom: 0;
+}
+
+.moment-avatar {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.35rem;
+  object-fit: cover;
+  background: var(--background-secondary);
+}
+
+.moment-main {
+  min-width: 0;
+}
+
+.moment-nick {
+  color: #576b95;
+  font-size: 0.95rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.theme-dark .moment-nick {
+  color: color-mix(in srgb, var(--text-accent, #24c6dc) 82%, #9ec9ff);
+}
+
+.moment-text {
+  margin: 0.2rem 0 0;
+  color: var(--text-bright);
+  font-size: 0.95rem;
+  line-height: 1.62;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.moment-grid {
+  --moment-gap: 0.28rem;
+  margin-top: 0.55rem;
+  display: grid;
+  gap: var(--moment-gap);
+  width: min(100%, 17.6rem);
+}
+
+.moment-grid.is-1 {
+  width: min(100%, 13.5rem);
+  grid-template-columns: 1fr;
+}
+
+.moment-grid.is-2,
+.moment-grid.is-4 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.moment-grid.is-3,
+.moment-grid.is-5,
+.moment-grid.is-6,
+.moment-grid.is-7,
+.moment-grid.is-8,
+.moment-grid.is-9 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.moment-cell {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  border-radius: 0.12rem;
+  background: var(--background-secondary);
+  cursor: zoom-in;
+}
+
+.moment-grid.is-1 .moment-cell {
+  aspect-ratio: auto;
+  max-height: 16rem;
+}
+
+.moment-grid.is-1 .moment-cell img {
+  width: 100%;
+  height: auto;
+  max-height: 16rem;
+  object-fit: cover;
+}
+
+.moment-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.moment-cell:focus-visible {
+  outline: 2px solid var(--text-accent, #24c6dc);
+  outline-offset: 2px;
+}
+
+.moment-foot {
+  margin-top: 0.45rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+}
+
+.moment-place {
+  color: #576b95;
+}
+
+.theme-dark .moment-place {
+  color: color-mix(in srgb, var(--text-accent, #24c6dc) 70%, #fff);
+}
+
+.moments-empty {
+  margin-top: 1.25rem;
+  border-radius: 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--text-bright) 10%, transparent);
+  background: color-mix(in srgb, var(--background-secondary) 80%, transparent);
+  padding: 2rem 1.25rem;
+  text-align: center;
+  color: var(--text-dim);
+}
+
+.moments-empty strong,
+.moments-empty code {
+  color: var(--text-bright);
+}
+
+.moment-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background: rgb(0 0 0 / 0.94);
+}
+
+.moment-lightbox-top {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.75rem 0.9rem;
+}
+
+.moment-lightbox-close,
+.moment-lightbox-nav {
+  border: 0;
+  background: rgb(255 255 255 / 0.1);
+  color: #fff;
+  border-radius: 999px;
+  min-width: 2.4rem;
+  height: 2.4rem;
+  padding: 0 0.85rem;
+  cursor: pointer;
+}
+
+.moment-lightbox-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 0.5rem 1rem 1rem;
+}
+
+.moment-lightbox-stage img {
+  max-width: min(96vw, 960px);
+  max-height: min(78vh, 860px);
+  object-fit: contain;
+  border-radius: 0.25rem;
+}
+
+.moment-lightbox-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  padding: 0.75rem 1rem 1.25rem;
+  color: rgb(255 255 255 / 0.75);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 640px) {
+  .moments-shell {
+    width: 100%;
+  }
+
+  .moments-cover {
+    height: min(18rem, max(13.5rem, 58vw));
+  }
+
+  .moments-meta {
+    margin-top: -3rem;
+    padding: 0 0.7rem;
+  }
+
+  .moments-cover-avatar {
+    width: 4.1rem;
+    height: 4.1rem;
+  }
+
+  .moments-cover-name {
+    margin-bottom: 2.1rem;
+    font-size: 1rem;
+  }
+
+  .moment-grid {
+    width: min(100%, 16.5rem);
+  }
+}

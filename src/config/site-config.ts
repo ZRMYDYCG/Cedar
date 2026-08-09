@@ -81,6 +81,12 @@ export const siteConfig: SiteConfig = {
         children: []
       },
       {
+        name: 'Moments',
+        path: '/moments',
+        i18n: { 'zh-CN': '朋友圈', 'zh-TW': '朋友圈', en: 'Moments' },
+        children: []
+      },
+      {
         name: 'About',
         path: '/about',
         i18n: { 'zh-CN': '关于', 'zh-TW': '關於', en: 'About' },

@@ -5,6 +5,7 @@
 @import './linkbox.css';
 @import './linkcard.css';
 @import './comment.css';
+@import './moments.css'; /* moments cover v5 */
 
 /*
  * Vue App.vue / index.scss body stack:
@@ -24,6 +25,22 @@ body {
   font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   line-height: 2;
   color: var(--text-normal, #bebebe);
+}
+
+/* Hide scrollbars globally; scrolling still works */
+html,
+body,
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* legacy Edge/IE */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none; /* Chrome / Safari / Chromium */
 }
 
 /* Toggle moon must NOT be flex-centered — Vue offsets with margin on the svg */

@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     posts: Post;
+    moments: Moment;
     pages: Page;
     categories: Category;
     tags: Tag;
@@ -83,6 +84,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
+    moments: MomentsSelect<false> | MomentsSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
@@ -232,6 +234,30 @@ export interface Tag {
   createdAt: string;
 }
 /**
+ * 微信朋友圈式动态：文案 + 最多 9 张图
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "moments".
+ */
+export interface Moment {
+  id: number;
+  content: string;
+  /**
+   * 最多 9 张，前台按微信朋友圈九宫格展示
+   */
+  images?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  location?: string | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
@@ -293,6 +319,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'posts';
         value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'moments';
+        value: number | Moment;
       } | null)
     | ({
         relationTo: 'pages';
@@ -406,6 +436,24 @@ export interface PostsSelect<T extends boolean = true> {
   categories?: T;
   tags?: T;
   author?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "moments_select".
+ */
+export interface MomentsSelect<T extends boolean = true> {
+  content?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  location?: T;
+  publishedAt?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

@@ -26,10 +26,12 @@
     "@payloadcms/plugin-cloud-storage": "3.87.1",
     "@payloadcms/richtext-lexical": "^3.82.1",
     "@payloadcms/ui": "^3.82.1",
+    "@radix-ui/react-scroll-area": "^1.2.18",
     "@tanstack/react-form": "^1.12.0",
     "@tanstack/react-query": "^5.80.0",
     "@tanstack/react-table": "^8.21.0",
     "@tanstack/react-virtual": "^3.13.0",
+    "clsx": "^2.1.1",
     "cross-env": "^10.1.0",
     "graphql": "^16.8.1",
     "gsap": "^3.13.0",
@@ -39,6 +41,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "sharp": "^0.34.2",
+    "tailwind-merge": "^3.6.0",
     "zustand": "^5.0.5"
   },
   "devDependencies": {

@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url'
 
 import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
+import { Moments } from './collections/Moments'
 import { migrations } from './migrations'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
@@ -49,7 +50,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname)
     }
   },
-  collections: [Users, Media, Posts, Pages, Categories, Tags],
+  collections: [Users, Media, Posts, Moments, Pages, Categories, Tags],
   editor: lexicalEditor(),
   secret: env('PAYLOAD_SECRET') || 'INSECURE_MISSING_PAYLOAD_SECRET',
   typescript: {
