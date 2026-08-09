@@ -134,7 +134,7 @@ Gitee Contents API 最终文件需 ≤ **2MB**。上传时会用 sharp 自动压
 **Admin 打不开 / 500 / Application error（Digest …）**  
 → 看 Vercel 函数日志。常见原因：
 1. 数据库连不上或 `PAYLOAD_SECRET` 为空  
-2. **生产库还没建表**：Postgres 在生产不会自动 `push`。确认 Build Command 是 `pnpm run ci`，且构建日志跑过 `payload migrate`。缺 migration 时本地执行 `pnpm payload migrate:create` 后重新部署。
+2. **生产库还没建表**：Postgres 在生产不会自动 `push`。确认 Build Command 是 `pnpm run ci`（会 `yes | payload migrate` 再 build）。若库里曾有 `payload_migrations.batch = -1`（dev push 痕迹），无交互的 migrate 以前会静默退出；现已用 `yes` 自动确认。缺 migration 时本地执行 `pnpm payload migrate:create` 后重新部署。
 
 **上传图片失败 / `ERR_CONNECTION_CLOSED` / Admin 报 `reading 'doc'` / `document with ID N could not be found`**  
 → 媒体约定：**CMS `filename` = 图床对象名**（内容 sha 作 id，如 `a1b2….webp`）。只在 Media.beforeChange 压图改名一次，adapter 原样上传，不再二次改名。  
