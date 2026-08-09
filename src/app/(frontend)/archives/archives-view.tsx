@@ -3,6 +3,7 @@
 import Breadcrumbs from '@/components/breadcrumbs/breadcrumbs'
 import EmptyState from '@/components/empty-state/empty-state'
 import Paginator from '@/components/paginator/paginator'
+import { encodePathSegment } from '@/lib/path-segment'
 import { useAppStore } from '@/stores/app'
 import type { PostCard } from '@/types/post'
 import { useTranslations } from 'next-intl'
@@ -86,7 +87,7 @@ export default function ArchivesView({ posts }: { posts: PostCard[] }) {
                       </div>
                       <div className="timeline-marker" />
                       <div className="timeline-content">
-                        <Link href={`/post/${post.slug}`}>
+                        <Link href={`/post/${encodePathSegment(post.slug)}`}>
                           <h3 className="timeline-title">{post.title}</h3>
                         </Link>
                         <p>{post.text}</p>

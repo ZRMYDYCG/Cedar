@@ -1,6 +1,7 @@
 'use client'
 
 import EmptyState from '@/components/empty-state/empty-state'
+import { encodePathSegment } from '@/lib/path-segment'
 import { useAppStore } from '@/stores/app'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
@@ -95,7 +96,7 @@ export default function SearchModal() {
         setActive(i => Math.max(0, i - 1))
       }
       if (event.key === 'Enter' && results[active]) {
-        router.push(`/post/${results[active].slug}`)
+        router.push(`/post/${encodePathSegment(results[active].slug)}`)
         setOpen(false)
       }
     }
@@ -205,10 +206,12 @@ export default function SearchModal() {
                       id={`search-hit-item-${index}`}
                     >
                       <a
-                        href={`/post/${result.slug}`}
+                        href={`/post/${encodePathSegment(result.slug)}`}
                         onClick={event => {
                           event.preventDefault()
-                          router.push(`/post/${result.slug}`)
+                          router.push(
+                            `/post/${encodePathSegment(result.slug)}`
+                          )
                           setOpen(false)
                         }}
                       >

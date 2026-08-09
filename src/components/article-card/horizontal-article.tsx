@@ -2,6 +2,7 @@
 
 import LoadingSkeleton from '@/components/loading-skeleton/loading-skeleton'
 import SvgIcon from '@/components/svg-icon/svg-icon'
+import { encodePathSegment } from '@/lib/path-segment'
 import { useAppStore } from '@/stores/app'
 import type { PostCard } from '@/types/post'
 import { useTranslations } from 'next-intl'
@@ -36,7 +37,7 @@ export default function HorizontalArticle({
 
   const goPost = (slug?: string) => {
     if (!slug) return
-    router.push(`/post/${slug}`)
+    router.push(`/post/${encodePathSegment(slug)}`)
   }
 
   return (

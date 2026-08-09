@@ -1,6 +1,7 @@
 import { paragraphLexical } from '@/data/cms/map-post'
 import { safeCms } from '@/data/cms/safe'
 import { getPayloadClient } from '@/lib/payload'
+import { decodePathSegment } from '@/lib/path-segment'
 import type { Page } from '@/payload-types'
 import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 
@@ -11,8 +12,9 @@ export type CmsPage = {
 }
 
 export async function getPageBySlug(slug: string): Promise<CmsPage | null> {
+  const normalized = decodePathSegment(slug)
   return safeCms(
-    `getPageBySlug:${slug}`,
+    `getPageBySlug:${normalized}`,
     async () => {
       const payload = await getPayloadClient()
       const result = await payload.find({
@@ -20,7 +22,7 @@ export async function getPageBySlug(slug: string): Promise<CmsPage | null> {
         where: {
           and: [
             { _status: { equals: 'published' } },
-            { slug: { equals: slug } }
+            { slug: { equals: normalized } }
           ]
         },
         limit: 1,

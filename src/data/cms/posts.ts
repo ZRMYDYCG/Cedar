@@ -1,6 +1,7 @@
 import { mapPostToCard, type PostCardWithHtml } from '@/data/cms/map-post'
 import { safeCms } from '@/data/cms/safe'
 import { getPayloadClient } from '@/lib/payload'
+import { decodePathSegment } from '@/lib/path-segment'
 import type { Post } from '@/payload-types'
 import type { Where } from 'payload'
 
@@ -63,12 +64,13 @@ export async function getFeaturedPosts(): Promise<{
 export async function getPostBySlug(
   slug: string
 ): Promise<PostCardWithHtml | null> {
+  const normalized = decodePathSegment(slug)
   return safeCms(
-    `getPostBySlug:${slug}`,
+    `getPostBySlug:${normalized}`,
     async () => {
       const docs = await findPosts(
         {
-          and: [published, { slug: { equals: slug } }]
+          and: [published, { slug: { equals: normalized } }]
         },
         1
       )
@@ -83,8 +85,9 @@ export async function getAdjacentPosts(slug: string): Promise<{
   prev?: PostCardWithHtml
   next?: PostCardWithHtml
 }> {
+  const normalized = decodePathSegment(slug)
   const all = await getPublishedPosts()
-  const index = all.findIndex(post => post.slug === slug)
+  const index = all.findIndex(post => post.slug === normalized)
   if (index < 0) return {}
   return {
     prev: index > 0 ? all[index - 1] : undefined,
