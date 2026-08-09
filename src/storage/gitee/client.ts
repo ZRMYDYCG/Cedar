@@ -1,4 +1,8 @@
-import { MAX_UPLOAD_BYTES } from './constants'
+import { GITEE_FETCH_TIMEOUT_MS, MAX_UPLOAD_BYTES } from './constants'
+
+function giteeSignal(): AbortSignal {
+  return AbortSignal.timeout(GITEE_FETCH_TIMEOUT_MS)
+}
 
 export type GiteeConfig = {
   owner: string
@@ -86,38 +90,50 @@ export async function uploadGiteeFile({
     branch: config.branch
   }
 
-  // Prefer POST (new file) — avoids a slow preflight GET on every upload.
-  const created = await fetch(url, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(baseBody)
-  })
-
-  if (created.ok) return
-
-  // File already exists → fetch sha and overwrite.
-  const existing = await getGiteeFileMeta({ config, filePath })
-  if (!existing?.sha) {
-    throw new GiteeStorageError(await readErrorMessage(created), created.status)
-  }
-
-  const updated = await fetch(url, {
-    method: 'PUT',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      ...baseBody,
-      sha: existing.sha
+  try {
+    // Prefer POST (new file) — avoids a slow preflight GET on every upload.
+    const created = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(baseBody),
+      signal: giteeSignal()
     })
-  })
 
-  if (!updated.ok) {
-    throw new GiteeStorageError(await readErrorMessage(updated), updated.status)
+    if (created.ok) return
+
+    // File already exists → fetch sha and overwrite.
+    const existing = await getGiteeFileMeta({ config, filePath })
+    if (!existing?.sha) {
+      throw new GiteeStorageError(await readErrorMessage(created), created.status)
+    }
+
+    const updated = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ...baseBody,
+        sha: existing.sha
+      }),
+      signal: giteeSignal()
+    })
+
+    if (!updated.ok) {
+      throw new GiteeStorageError(await readErrorMessage(updated), updated.status)
+    }
+  } catch (err) {
+    if (err instanceof GiteeStorageError) throw err
+    if (err instanceof Error && err.name === 'TimeoutError') {
+      throw new GiteeStorageError(
+        `Gitee upload timed out after ${GITEE_FETCH_TIMEOUT_MS}ms`
+      )
+    }
+    throw err
   }
 }
 
@@ -138,7 +154,8 @@ export async function getGiteeFileMeta({
   url.searchParams.set('ref', config.branch)
 
   const response = await fetch(url, {
-    headers: { Accept: 'application/json' }
+    headers: { Accept: 'application/json' },
+    signal: giteeSignal()
   })
 
   if (response.status === 404) {
@@ -177,7 +194,8 @@ export async function deleteGiteeFile({
       sha: meta.sha,
       message,
       branch: config.branch
-    })
+    }),
+    signal: giteeSignal()
   })
 
   if (!response.ok && response.status !== 404) {
@@ -196,7 +214,8 @@ export async function fetchGiteeRaw({
     headers: {
       Accept: '*/*',
       'User-Agent': 'aurora-web-gitee-storage'
-    }
+    },
+    signal: giteeSignal()
   })
 }
 

@@ -1,10 +1,14 @@
 import path from 'path'
 import sharp from 'sharp'
 
-import { MAX_INPUT_BYTES, MAX_UPLOAD_BYTES } from './constants'
+import {
+  MAX_INPUT_BYTES,
+  MAX_UPLOAD_BYTES,
+  TARGET_UPLOAD_BYTES
+} from './constants'
 import { GiteeStorageError } from './client'
 
-const MAX_EDGE = 2000
+const MAX_EDGE = 1600
 
 type PreparedFile = {
   buffer: Buffer
@@ -20,9 +24,9 @@ function withExt(filename: string, ext: string): string {
 }
 
 /**
- * Compress / resize raster images so they fit Gitee Contents API (~2MB).
+ * Compress / resize raster images for fast Gitee Contents API uploads.
  * SVG/GIF pass through unchanged (with hard size check).
- * Files already ≤2MB are uploaded as-is.
+ * Other rasters are converted to WebP and aimed at TARGET_UPLOAD_BYTES.
  */
 export async function prepareUploadBuffer(file: {
   buffer: Buffer
@@ -51,12 +55,17 @@ export async function prepareUploadBuffer(file: {
     )
   }
 
-  if (buffer.byteLength <= MAX_UPLOAD_BYTES) {
+  // Already a small webp — skip re-encode for speed.
+  if (
+    mimeType === 'image/webp' &&
+    buffer.byteLength <= TARGET_UPLOAD_BYTES
+  ) {
     return { buffer, filename, mimeType }
   }
 
-  const qualities = [82, 72, 62, 52, 42]
+  const qualities = [78, 68, 58, 48, 38]
   let lastError: unknown
+  let smallest: PreparedFile | undefined
 
   for (const quality of qualities) {
     try {
@@ -69,21 +78,34 @@ export async function prepareUploadBuffer(file: {
           fit: 'inside',
           withoutEnlargement: true
         })
-        .webp({ quality, effort: 4 })
+        .webp({ quality, effort: 2 })
         .toBuffer({ resolveWithObject: true })
 
-      if (out.data.byteLength <= MAX_UPLOAD_BYTES) {
-        return {
-          buffer: out.data,
-          filename: withExt(filename, '.webp'),
-          mimeType: 'image/webp',
-          width: out.info.width || meta.width,
-          height: out.info.height || meta.height
-        }
+      const candidate: PreparedFile = {
+        buffer: out.data,
+        filename: withExt(filename, '.webp'),
+        mimeType: 'image/webp',
+        width: out.info.width || meta.width,
+        height: out.info.height || meta.height
+      }
+
+      if (
+        !smallest ||
+        candidate.buffer.byteLength < smallest.buffer.byteLength
+      ) {
+        smallest = candidate
+      }
+
+      if (candidate.buffer.byteLength <= TARGET_UPLOAD_BYTES) {
+        return candidate
       }
     } catch (err) {
       lastError = err
     }
+  }
+
+  if (smallest && smallest.buffer.byteLength <= MAX_UPLOAD_BYTES) {
+    return smallest
   }
 
   throw new GiteeStorageError(

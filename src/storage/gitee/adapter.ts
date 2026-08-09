@@ -1,6 +1,5 @@
 import type { Adapter, GeneratedAdapter } from '@payloadcms/plugin-cloud-storage/types'
 import { getFileKey, getFilePrefix } from '@payloadcms/plugin-cloud-storage/utilities'
-import type { CollectionSlug } from 'payload'
 
 import {
   deleteGiteeFile,
@@ -42,27 +41,18 @@ export function createGiteeAdapter({
 }: CreateGiteeAdapterArgs): Adapter {
   return ({ collection, prefix: collectionPrefix = '' }): GeneratedAdapter => ({
     name: 'gitee',
-    handleUpload: async ({ data, file, req }) => {
-      const originalFilename = file.filename
-      const originalMimeType = file.mimeType
-      const originalFilesize = file.filesize
-
+    handleUpload: async ({ data, file }) => {
+      // Prefer already-normalized bytes from Media beforeChange; still safe-guard here.
       const prepared = await prepareUploadBuffer({
         buffer: file.buffer,
         filename: file.filename,
         mimeType: file.mimeType
       })
 
-      // Keep in-memory file/doc in sync for the Gitee object key.
       file.buffer = prepared.buffer
       file.filename = prepared.filename
       file.mimeType = prepared.mimeType
       file.filesize = prepared.buffer.byteLength
-      data.filename = prepared.filename
-      data.mimeType = prepared.mimeType
-      data.filesize = prepared.buffer.byteLength
-      if (prepared.width) data.width = prepared.width
-      if (prepared.height) data.height = prepared.height
 
       const { fileKey } = getFileKey({
         collectionPrefix,
@@ -77,46 +67,11 @@ export function createGiteeAdapter({
         message: `upload ${fileKey}`
       })
 
-      // IMPORTANT: plugin-cloud-storage calls payload.update() whenever
-      // handleUpload returns an object. Returning the full `data` doc made
-      // that follow-up update throw Payload "Not Found" after slow Gitee
-      // uploads → POST /api/media 404, Admin stuck, file already on Gitee.
-      //
-      // - No metadata change: return void (skip plugin update).
-      // - Metadata change (e.g. compressed to webp): persist a minimal patch
-      //   ourselves with overrideAccess, then return void so the plugin does
-      //   not run its own update.
-      const metadataChanged =
-        prepared.filename !== originalFilename ||
-        prepared.mimeType !== originalMimeType ||
-        prepared.buffer.byteLength !== originalFilesize ||
-        Boolean(prepared.width) ||
-        Boolean(prepared.height)
-
-      if (!metadataChanged || data?.id == null) return
-
-      const patch = {
-        filename: prepared.filename,
-        mimeType: prepared.mimeType,
-        filesize: prepared.buffer.byteLength,
-        ...(prepared.width ? { width: prepared.width } : {}),
-        ...(prepared.height ? { height: prepared.height } : {})
-      }
-
-      if (!req.context) req.context = {}
-      req.context.skipCloudStorage = true
-      try {
-        await req.payload.update({
-          id: data.id,
-          collection: collection.slug as CollectionSlug,
-          data: patch,
-          depth: 0,
-          overrideAccess: true,
-          req
-        })
-      } finally {
-        delete req.context.skipCloudStorage
-      }
+      // Never return an object and never call payload.update here.
+      // After a slow Gitee round-trip the request's DB connection is often
+      // stale; update() then throws Payload "Not Found", the route 404/504s,
+      // and Admin crashes reading response.doc (ERR_CONNECTION_CLOSED).
+      // Filename/mime/size are written in Media beforeChange before create.
     },
     handleDelete: async ({ doc, filename }) => {
       const { fileKey } = getFileKey({
