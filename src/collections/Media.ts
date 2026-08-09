@@ -9,13 +9,11 @@ export const Media: CollectionConfig = {
     {
       name: 'alt',
       type: 'text',
-      required: true,
-      defaultValue: 'image'
+      required: true
     }
   ],
   upload: {
-    // Crop/focal-point editing forces a large multipart POST through the
-    // Vercel function (~4.5MB limit). Keep uploads on the client→Blob path.
+    // Avoid Admin crop UI; large cropped multipart POSTs hit Vercel 4.5MB limit.
     crop: false,
     focalPoint: false
   }

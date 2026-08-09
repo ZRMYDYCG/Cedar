@@ -16,14 +16,17 @@ import { Users } from './collections/Users'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
-// Read via process.env object so Next does not freeze an empty build-time value.
-const runtimeEnv = process.env
-const blobToken = runtimeEnv.BLOB_READ_WRITE_TOKEN
-const connectionString =
-  runtimeEnv.POSTGRES_URL || runtimeEnv.DATABASE_URL || ''
-const serverURL = runtimeEnv.NEXT_PUBLIC_SERVER_URL || undefined
 
-if (!runtimeEnv.PAYLOAD_SECRET) {
+/** Avoid Next build-time inlining of empty env values (breaks Vercel runtime). */
+function env(name: string): string | undefined {
+  const value = process.env[name]
+  return typeof value === 'string' && value.length > 0 ? value : undefined
+}
+
+const blobToken = env('BLOB_READ_WRITE_TOKEN')
+const connectionString = env('POSTGRES_URL') || env('DATABASE_URL') || ''
+
+if (!env('PAYLOAD_SECRET')) {
   console.warn(
     '[Cedar] PAYLOAD_SECRET is missing — set it in Vercel Environment Variables'
   )
@@ -38,7 +41,8 @@ if (!blobToken) {
 }
 
 export default buildConfig({
-  serverURL,
+  // Do not set serverURL from NEXT_PUBLIC_SERVER_URL — a trailing slash / wrong
+  // host breaks Admin create routes. Relative /api paths work on Vercel.
   admin: {
     user: Users.slug,
     importMap: {
@@ -47,7 +51,7 @@ export default buildConfig({
   },
   collections: [Users, Media, Posts, Pages, Categories, Tags],
   editor: lexicalEditor(),
-  secret: runtimeEnv.PAYLOAD_SECRET || 'INSECURE_MISSING_PAYLOAD_SECRET',
+  secret: env('PAYLOAD_SECRET') || 'INSECURE_MISSING_PAYLOAD_SECRET',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts')
   },
