@@ -78,25 +78,46 @@ export async function uploadGiteeFile({
   }
 
   const content = buffer.toString('base64')
-  const existing = await getGiteeFileMeta({ config, filePath })
+  const url = contentsUrl(config, filePath)
+  const baseBody = {
+    access_token: config.token,
+    content,
+    message,
+    branch: config.branch
+  }
 
-  const response = await fetch(contentsUrl(config, filePath), {
-    method: existing?.sha ? 'PUT' : 'POST',
+  // Prefer POST (new file) — avoids a slow preflight GET on every upload.
+  const created = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(baseBody)
+  })
+
+  if (created.ok) return
+
+  // File already exists → fetch sha and overwrite.
+  const existing = await getGiteeFileMeta({ config, filePath })
+  if (!existing?.sha) {
+    throw new GiteeStorageError(await readErrorMessage(created), created.status)
+  }
+
+  const updated = await fetch(url, {
+    method: 'PUT',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      access_token: config.token,
-      content,
-      message,
-      branch: config.branch,
-      ...(existing?.sha ? { sha: existing.sha } : {})
+      ...baseBody,
+      sha: existing.sha
     })
   })
 
-  if (!response.ok) {
-    throw new GiteeStorageError(await readErrorMessage(response), response.status)
+  if (!updated.ok) {
+    throw new GiteeStorageError(await readErrorMessage(updated), updated.status)
   }
 }
 

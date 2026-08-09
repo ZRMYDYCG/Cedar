@@ -136,12 +136,13 @@ Gitee Contents API 最终文件需 ≤ **2MB**。上传时会用 sharp 自动压
 1. 数据库连不上或 `PAYLOAD_SECRET` 为空  
 2. **生产库还没建表**：Postgres 在生产不会自动 `push`。确认 Build Command 是 `pnpm run ci`，且构建日志跑过 `payload migrate`。缺 migration 时本地执行 `pnpm payload migrate:create` 后重新部署。
 
-**上传图片失败**  
-→ 常见原因：
+**上传图片失败 / Admin 一直 loading，最后 `POST /api/media` 404，但 Gitee 已有文件**  
+→ 已在适配器侧修复：上传后勿回写整份 Media 文档（慢请求后 `payload.update` 会 Not Found）。重新部署后重试。其它常见原因：
 1. 未配齐 `GITEE_OWNER` / `GITEE_REPO` / `GITEE_TOKEN`，或 Token 无仓库写权限  
-2. 文件超过 **2MB**（Gitee Contents API 限制；请先压图）  
+2. 文件超过 **2MB**（Gitee Contents API 限制；上传会尝试自动压到 ≤2MB）  
 3. `413` / `FUNCTION_PAYLOAD_TOO_LARGE`：仍可能被 Vercel 函数体限制挡住，请压到 2MB 以下  
-4. 构建/运行日志应出现 `[Cedar] Gitee media storage enabled`；若出现 missing 警告则环境变量未注入
+4. 构建/运行日志应出现 `[Cedar] Gitee media storage enabled`；若出现 missing 警告则环境变量未注入  
+5. Alt 必填：抽屉里直接传图时会用文件名自动填充
 
 **前台看不到文章**  
 → 确认 Admin 里状态是 **Published**（草稿不会出现在前台）。

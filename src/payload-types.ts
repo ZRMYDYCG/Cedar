@@ -164,6 +164,9 @@ export interface User {
  */
 export interface Media {
   id: number;
+  /**
+   * 留空时会用文件名自动填充
+   */
   alt: string;
   prefix?: string | null;
   updatedAt: string;
