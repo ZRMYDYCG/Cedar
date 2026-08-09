@@ -1,6 +1,7 @@
 'use client'
 
 import ArticleCard from '@/components/article-card/article-card'
+import EmptyState from '@/components/empty-state/empty-state'
 import Feature from '@/components/feature/feature'
 import FeatureList from '@/components/feature/feature-list'
 import Paginator from '@/components/paginator/paginator'
@@ -115,18 +116,28 @@ export default function HomeView({
             />
           </span>
 
-          <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {pagePosts.map(post => (
-              <ArticleCard key={post.slug} data={post} />
-            ))}
-          </ul>
+          {pagePosts.length > 0 ? (
+            <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {pagePosts.map(post => (
+                <ArticleCard key={post.slug} data={post} />
+              ))}
+            </ul>
+          ) : (
+            <EmptyState
+              title={
+                activeTab ? t('no-search-result') : t('empty-posts')
+              }
+            />
+          )}
 
-          <Paginator
-            page={page}
-            pageSize={pageSize}
-            pageTotal={listPosts.length}
-            onPageChange={setPage}
-          />
+          {listPosts.length > 0 ? (
+            <Paginator
+              page={page}
+              pageSize={pageSize}
+              pageTotal={listPosts.length}
+              onPageChange={setPage}
+            />
+          ) : null}
         </div>
         <div>
           <Sidebar>

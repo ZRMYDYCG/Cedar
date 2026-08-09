@@ -14,7 +14,6 @@ type FeatureListProps = {
 export default function FeatureList({ data }: FeatureListProps) {
   const t = useTranslations('home')
   const theme = useAppStore(s => s.themeConfig.theme)
-  const posts = data.length > 0 ? data : [{}, {}]
 
   return (
     <div className="inverted-main-grid box-border gap-7 py-7">
@@ -36,14 +35,13 @@ export default function FeatureList({ data }: FeatureListProps) {
         />
       </div>
 
-      <ul className="grid gap-7 lg:grid-cols-2">
-        {posts.map((post, index) => (
-          <ArticleCard
-            key={post.slug || `feature-skeleton-${index}`}
-            data={post}
-          />
-        ))}
-      </ul>
+      {data.length > 0 ? (
+        <ul className="grid gap-7 lg:grid-cols-2">
+          {data.map(post => (
+            <ArticleCard key={post.slug} data={post} />
+          ))}
+        </ul>
+      ) : null}
     </div>
   )
 }

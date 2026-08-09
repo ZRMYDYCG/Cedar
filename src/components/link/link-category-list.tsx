@@ -11,10 +11,15 @@ export default function LinkCategoryList({
   links: Record<string, FriendLink[]>
 }) {
   const t = useTranslations()
+  const categories = Object.keys(links).filter(
+    category => links[category].length > 0
+  )
+
+  if (categories.length === 0) return null
 
   return (
     <>
-      {Object.keys(links).map(category => (
+      {categories.map(category => (
         <div key={category}>
           <MainTitle
             title={category}

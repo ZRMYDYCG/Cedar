@@ -1,6 +1,7 @@
 'use client'
 
 import ArticleCard from '@/components/article-card/article-card'
+import EmptyState from '@/components/empty-state/empty-state'
 import CategoryBox from '@/components/sidebar/category-box'
 import Sidebar from '@/components/sidebar/sidebar'
 import TagBox from '@/components/sidebar/tag-box'
@@ -56,15 +57,7 @@ export default function SearchView({
             ))}
           </ul>
         ) : (
-          <div className="flex flex-col items-center justify-center py-20">
-            <SvgIcon
-              iconClass="empty-search"
-              width="12rem"
-              height="12rem"
-              className="opacity-40"
-            />
-            <p className="mt-4 text-ob-dim">{t('no-search-result')}</p>
-          </div>
+          <EmptyState title={t('no-search-result')} />
         )}
         <Sidebar>
           <CategoryBox categories={categories} activeCategory={category} />

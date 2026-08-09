@@ -225,21 +225,6 @@
   color: color-mix(in srgb, var(--text-accent, #24c6dc) 70%, #fff);
 }
 
-.moments-empty {
-  margin-top: 1.25rem;
-  border-radius: 0.85rem;
-  border: 1px solid color-mix(in srgb, var(--text-bright) 10%, transparent);
-  background: color-mix(in srgb, var(--background-secondary) 80%, transparent);
-  padding: 2rem 1.25rem;
-  text-align: center;
-  color: var(--text-dim);
-}
-
-.moments-empty strong,
-.moments-empty code {
-  color: var(--text-bright);
-}
-
 .moment-lightbox {
   position: fixed;
   inset: 0;

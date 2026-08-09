@@ -1,6 +1,6 @@
 'use client'
 
-import SvgIcon from '@/components/svg-icon/svg-icon'
+import EmptyState from '@/components/empty-state/empty-state'
 import SubTitle from '@/components/title/sub-title'
 import { useTranslations } from 'next-intl'
 
@@ -10,10 +10,7 @@ export default function RecentComment() {
   return (
     <div className="sidebar-box mb-8">
       <SubTitle title="titles.recent_comment" icon="quote" />
-      <div className="flex flex-row items-center justify-center text-ob-dim">
-        <SvgIcon className="mr-2" iconClass="warning" stroke="var(--text-dim)" />
-        {t('empty-recent-comments')}
-      </div>
+      <EmptyState variant="inline" title={t('empty-recent-comments')} />
     </div>
   )
 }

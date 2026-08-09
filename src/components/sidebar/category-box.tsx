@@ -1,9 +1,10 @@
 'use client'
 
-import LoadingSkeleton from '@/components/loading-skeleton/loading-skeleton'
+import EmptyState from '@/components/empty-state/empty-state'
 import SubTitle from '@/components/title/sub-title'
 import type { TaxonomyItem } from '@/data/site-taxonomy'
 import { useAppStore } from '@/stores/app'
+import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 
 export default function CategoryBox({
@@ -16,14 +17,15 @@ export default function CategoryBox({
   sidebarBox?: boolean
 }) {
   const router = useRouter()
+  const t = useTranslations('settings')
   const gradient = useAppStore(s => s.themeConfig.theme.header_gradient_css)
 
   return (
     <div className={sidebarBox ? 'sidebar-box' : undefined}>
-      <SubTitle title="titles.category_list" icon="category" />
-      <ul className="flex cursor-pointer flex-wrap justify-evenly gap-2 pt-2">
-        {categories.length > 0 ? (
-          categories.map(category => (
+      {sidebarBox ? <SubTitle title="titles.category_list" icon="category" /> : null}
+      {categories.length > 0 ? (
+        <ul className="flex cursor-pointer flex-wrap justify-evenly gap-2 pt-2">
+          {categories.map(category => (
             <li
               key={category.slug}
               className="flex flex-row items-center hover:opacity-50"
@@ -45,11 +47,11 @@ export default function CategoryBox({
                 {category.count}
               </b>
             </li>
-          ))
-        ) : (
-          <LoadingSkeleton count={10} height="20px" width="3rem" />
-        )}
-      </ul>
+          ))}
+        </ul>
+      ) : (
+        <EmptyState variant="inline" title={t('empty-category')} />
+      )}
     </div>
   )
 }

@@ -1,0 +1,95 @@
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.empty-state__icon {
+  flex-shrink: 0;
+  opacity: 0.45;
+}
+
+.empty-state__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.empty-state__title {
+  margin: 0;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.empty-state__description {
+  margin: 0;
+  max-width: 28rem;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--text-dim) 88%, transparent);
+}
+
+.empty-state__description strong,
+.empty-state__description code {
+  color: var(--text-bright);
+  font-weight: 600;
+}
+
+.empty-state__action {
+  margin-top: 0.75rem;
+}
+
+/* Large page-level empty (lists, archives, search) */
+.empty-state--page {
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  min-height: 16rem;
+  padding: 3.5rem 1.25rem;
+}
+
+.empty-state--page .empty-state__title {
+  font-size: 1rem;
+}
+
+/* Bordered panel empty (moments, friend-link plate) */
+.empty-state--panel {
+  flex-direction: column;
+  gap: 0.85rem;
+  width: 100%;
+  margin-top: 1.25rem;
+  border-radius: 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--text-bright) 10%, transparent);
+  background: color-mix(in srgb, var(--background-secondary, var(--background-primary)) 80%, transparent);
+  padding: 2rem 1.25rem;
+}
+
+.empty-state--panel .empty-state__icon {
+  opacity: 0.4;
+}
+
+/* Compact sidebar / modal empty */
+.empty-state--inline {
+  flex-direction: row;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.35rem 0;
+  text-align: left;
+}
+
+.empty-state--inline .empty-state__icon {
+  opacity: 0.75;
+}
+
+.empty-state--inline .empty-state__body {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.empty-state--inline .empty-state__title {
+  font-size: 0.875rem;
+}

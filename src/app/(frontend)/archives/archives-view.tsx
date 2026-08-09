@@ -1,6 +1,7 @@
 'use client'
 
 import Breadcrumbs from '@/components/breadcrumbs/breadcrumbs'
+import EmptyState from '@/components/empty-state/empty-state'
 import Paginator from '@/components/paginator/paginator'
 import { useAppStore } from '@/stores/app'
 import type { PostCard } from '@/types/post'
@@ -60,48 +61,54 @@ export default function ArchivesView({ posts }: { posts: PostCard[] }) {
         <h1 className="post-title uppercase text-white">{pageTitle}</h1>
       </div>
       <div className="block min-h-screen rounded-2xl bg-ob-deep-800 px-14 py-16 shadow-xl">
-        <ul className="timeline timeline-centered">
-          {archives.map(group => (
-            <Fragment key={`${group.month}-${group.year}`}>
-              <li className="timeline-item period">
-                <div className="timeline-info" />
-                <div className="timeline-marker" />
-                <div className="timeline-content">
-                  <h2 className="timeline-title">
-                    {t(group.month)} {group.year}
-                  </h2>
-                </div>
-              </li>
-              {group.posts.map(post => (
-                <li className="timeline-item" key={post.slug}>
-                  <div className="timeline-info">
-                    <span>
-                      {post.date
-                        ? `${t(post.date.month)} ${post.date.day}, ${post.date.year}`
-                        : ''}
-                    </span>
-                  </div>
-                  <div className="timeline-marker" />
-                  <div className="timeline-content">
-                    <Link href={`/post/${post.slug}`}>
-                      <h3 className="timeline-title">{post.title}</h3>
-                    </Link>
-                    <p>{post.text}</p>
-                  </div>
-                </li>
+        {archives.length > 0 ? (
+          <>
+            <ul className="timeline timeline-centered">
+              {archives.map(group => (
+                <Fragment key={`${group.month}-${group.year}`}>
+                  <li className="timeline-item period">
+                    <div className="timeline-info" />
+                    <div className="timeline-marker" />
+                    <div className="timeline-content">
+                      <h2 className="timeline-title">
+                        {t(group.month)} {group.year}
+                      </h2>
+                    </div>
+                  </li>
+                  {group.posts.map(post => (
+                    <li className="timeline-item" key={post.slug}>
+                      <div className="timeline-info">
+                        <span>
+                          {post.date
+                            ? `${t(post.date.month)} ${post.date.day}, ${post.date.year}`
+                            : ''}
+                        </span>
+                      </div>
+                      <div className="timeline-marker" />
+                      <div className="timeline-content">
+                        <Link href={`/post/${post.slug}`}>
+                          <h3 className="timeline-title">{post.title}</h3>
+                        </Link>
+                        <p>{post.text}</p>
+                      </div>
+                    </li>
+                  ))}
+                </Fragment>
               ))}
-            </Fragment>
-          ))}
-        </ul>
-        <Paginator
-          page={page}
-          pageSize={PAGE_SIZE}
-          pageTotal={posts.length}
-          onPageChange={next => {
-            setPage(next)
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-          }}
-        />
+            </ul>
+            <Paginator
+              page={page}
+              pageSize={PAGE_SIZE}
+              pageTotal={posts.length}
+              onPageChange={next => {
+                setPage(next)
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
+            />
+          </>
+        ) : (
+          <EmptyState title={t('settings.empty-archives')} />
+        )}
       </div>
     </div>
   )

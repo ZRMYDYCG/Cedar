@@ -1,5 +1,6 @@
 'use client'
 
+import EmptyState from '@/components/empty-state/empty-state'
 import { useAppStore } from '@/stores/app'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
@@ -183,12 +184,12 @@ export default function SearchModal() {
           <div id="Search-Dropdown" className="search-dropdown">
             {!keyword ? (
               <div className="search-startscreen">
-                <p>{t('no-recent-search')}</p>
+                <EmptyState variant="inline" title={t('no-recent-search')} />
               </div>
             ) : null}
             {keyword && results.length === 0 ? (
               <div className="search-startscreen">
-                <p>{t('no-search-result')}</p>
+                <EmptyState variant="inline" title={t('no-search-result')} />
               </div>
             ) : null}
             {results.length > 0 ? (

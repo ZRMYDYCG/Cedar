@@ -1,8 +1,10 @@
 'use client'
 
 import Breadcrumbs from '@/components/breadcrumbs/breadcrumbs'
+import EmptyState from '@/components/empty-state/empty-state'
 import type { MomentCard } from '@/data/cms/moments'
 import { useAppStore } from '@/stores/app'
+import { useTranslations } from 'next-intl'
 import { useEffect, useMemo, useState } from 'react'
 
 type MomentsViewProps = {
@@ -43,6 +45,7 @@ function gridClass(count: number) {
 }
 
 export default function MomentsView({ moments }: MomentsViewProps) {
+  const t = useTranslations('settings')
   const resetHeaderImage = useAppStore(s => s.resetHeaderImage)
   const themeConfig = useAppStore(s => s.themeConfig)
   const [preview, setPreview] = useState<PreviewState | null>(null)
@@ -144,12 +147,11 @@ export default function MomentsView({ moments }: MomentsViewProps) {
         </section>
 
         {moments.length === 0 ? (
-          <div className="moments-empty">
-            <p>还没有动态。</p>
-            <p className="mt-2 text-sm">
-              在 Payload Admin 打开 <code>朋友圈</code>，新建并 <strong>Publish</strong>。
-            </p>
-          </div>
+          <EmptyState
+            variant="panel"
+            title={t('empty-moments')}
+            description={t('empty-moments-hint')}
+          />
         ) : (
           <div className="moments-feed">
             {moments.map(moment => {
