@@ -88,6 +88,16 @@ export const siteConfig: SiteConfig = {
         children: []
       },
       {
+        name: 'Three Joys',
+        path: '/joys',
+        i18n: {
+          'zh-CN': '三件开心事',
+          'zh-TW': '三件開心事',
+          en: 'Three Joys'
+        },
+        children: []
+      },
+      {
         name: 'About',
         path: '/about',
         i18n: { 'zh-CN': '关于', 'zh-TW': '關於', en: 'About' },

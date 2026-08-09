@@ -1,0 +1,84 @@
+.joys-page {
+  max-width: 42rem;
+  margin: 0 auto 4rem;
+  padding: 0 0.25rem;
+}
+
+.joys-header {
+  margin-bottom: 2rem;
+}
+
+.joys-header h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 700;
+  color: var(--text-bright);
+}
+
+.joys-header p {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.joys-feed {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.joys-card {
+  background: var(--background-secondary);
+  border-radius: 0.85rem;
+  padding: 1.25rem 1.35rem 1.1rem;
+  box-shadow: var(--accent-shadow);
+}
+
+.joys-card time {
+  display: block;
+  margin-bottom: 0.85rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-accent);
+}
+
+.joys-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.joys-items > li {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.joys-index {
+  flex: 0 0 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--main-gradient);
+  margin-top: 0.2rem;
+}
+
+.joys-items p {
+  margin: 0;
+  color: var(--text-normal);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url'
 
 import { Categories } from './collections/Categories'
 import { Comments } from './collections/Comments'
+import { Joys } from './collections/Joys'
 import { Media } from './collections/Media'
 import { Moments } from './collections/Moments'
 import { SiteSettings } from './globals/SiteSettings'
@@ -52,7 +53,17 @@ export default buildConfig({
       baseDir: path.resolve(dirname)
     }
   },
-  collections: [Users, Media, Posts, Moments, Pages, Categories, Tags, Comments],
+  collections: [
+    Users,
+    Media,
+    Posts,
+    Moments,
+    Joys,
+    Pages,
+    Categories,
+    Tags,
+    Comments
+  ],
   globals: [SiteSettings],
   editor: lexicalEditor(),
   secret: env('PAYLOAD_SECRET') || 'INSECURE_MISSING_PAYLOAD_SECRET',

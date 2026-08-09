@@ -7,6 +7,7 @@
     "tags": "Tags",
     "post": "Article",
     "moments": "Life Notes",
+    "joys": "Three Joys",
     "links": "Friends",
     "search": "Search results",
     "message-board": "Message Board",
@@ -28,6 +29,11 @@
     "time-minutes-ago": "{count}m ago",
     "time-hours-ago": "{count}h ago",
     "time-days-ago": "{count}d ago"
+  },
+  "joys": {
+    "subtitle": "Three small joys, written down each day.",
+    "empty": "No entries yet",
+    "empty-hint": "Open “Three Joys” in Payload Admin, create a day, then publish."
   },
   "comments": {
     "placeholder-name": "Name (required)",

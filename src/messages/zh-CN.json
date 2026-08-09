@@ -7,6 +7,7 @@
     "tags": "标签",
     "post": "文章",
     "moments": "人生小记",
+    "joys": "三件开心事",
     "links": "友链",
     "message-board": "留言板",
     "search": "搜索结果",
@@ -28,6 +29,11 @@
     "time-minutes-ago": "{count} 分钟前",
     "time-hours-ago": "{count} 小时前",
     "time-days-ago": "{count} 天前"
+  },
+  "joys": {
+    "subtitle": "每天记下三件让自己开心的小事。",
+    "empty": "还没有记录",
+    "empty-hint": "在 Payload Admin 打开「三件开心事」，按天新建并发布。"
   },
   "comments": {
     "placeholder-name": "昵称（必填）",

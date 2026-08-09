@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     posts: Post;
     moments: Moment;
+    joys: Joy;
     pages: Page;
     categories: Category;
     tags: Tag;
@@ -86,6 +87,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     moments: MomentsSelect<false> | MomentsSelect<true>;
+    joys: JoysSelect<false> | JoysSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
@@ -267,6 +269,29 @@ export interface Moment {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * 每天记录三件开心事；前台页面 /joys 按日期展示。
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "joys".
+ */
+export interface Joy {
+  id: number;
+  /**
+   * 一天一条；同一天请编辑已有记录
+   */
+  day: string;
+  item1: string;
+  item2: string;
+  item3: string;
+  /**
+   * 不显示在前台，仅自己备忘
+   */
+  note?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
@@ -360,6 +385,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'moments';
         value: number | Moment;
+      } | null)
+    | ({
+        relationTo: 'joys';
+        value: number | Joy;
       } | null)
     | ({
         relationTo: 'pages';
@@ -495,6 +524,20 @@ export interface MomentsSelect<T extends boolean = true> {
       };
   location?: T;
   publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "joys_select".
+ */
+export interface JoysSelect<T extends boolean = true> {
+  day?: T;
+  item1?: T;
+  item2?: T;
+  item3?: T;
+  note?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

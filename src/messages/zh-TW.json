@@ -7,6 +7,7 @@
     "tags": "標簽",
     "post": "文章",
     "moments": "人生小記",
+    "joys": "三件開心事",
     "links": "友鏈",
     "message-board": "留言闆",
     "search": "搜索結果",
@@ -28,6 +29,11 @@
     "time-minutes-ago": "{count} 分鐘前",
     "time-hours-ago": "{count} 小時前",
     "time-days-ago": "{count} 天前"
+  },
+  "joys": {
+    "subtitle": "每天記下三件讓自己開心的小事。",
+    "empty": "還沒有記錄",
+    "empty-hint": "在 Payload Admin 打開「三件開心事」，按天新建並發佈。"
   },
   "comments": {
     "placeholder-name": "暱稱（必填）",

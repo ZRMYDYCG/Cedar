@@ -3,6 +3,7 @@ import * as migration_20260809_071200_media_prefix from './20260809_071200_media
 import * as migration_20260809_080000_moments from './20260809_080000_moments'
 import * as migration_20260809_174500_site_settings from './20260809_174500_site_settings'
 import * as migration_20260809_213000_comments from './20260809_213000_comments'
+import * as migration_20260809_220000_joys from './20260809_220000_joys'
 
 export const migrations = [
   {
@@ -29,5 +30,10 @@ export const migrations = [
     up: migration_20260809_213000_comments.up,
     down: migration_20260809_213000_comments.down,
     name: '20260809_213000_comments'
+  },
+  {
+    up: migration_20260809_220000_joys.up,
+    down: migration_20260809_220000_joys.down,
+    name: '20260809_220000_joys'
   }
 ]
