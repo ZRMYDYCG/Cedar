@@ -1,5 +1,4 @@
 import { createHash } from 'crypto'
-import path from 'path'
 import sharp from 'sharp'
 
 import {
@@ -10,61 +9,39 @@ import {
 import { GiteeStorageError } from './client'
 
 const MAX_EDGE = 1600
-const HASH_SUFFIX_RE = /-[0-9a-f]{8}$/i
 
-type PreparedFile = {
-  buffer: Buffer
+export type PreparedMedia = {
+  /** Content id = sha256(final bytes).slice(0, 16). Also the filename stem. */
+  id: string
+  /** Always `${id}${ext}` — CMS filename === Gitee object basename. */
   filename: string
+  buffer: Buffer
   mimeType: string
   width?: number
   height?: number
 }
 
-/**
- * Stable basename: strip trailing content-hash suffixes so prepareUploadBuffer
- * is idempotent (calling twice on the same bytes yields the same filename).
- */
-function stableBaseName(filename: string): string {
-  let name = path.parse(filename).name
-  while (HASH_SUFFIX_RE.test(name)) {
-    name = name.replace(HASH_SUFFIX_RE, '')
-  }
-  return name || 'upload'
+/** Filename is the id. Same bytes ⇒ same name; CMS and Gitee must use this exact string. */
+export function mediaFilenameFromBuffer(buffer: Buffer, ext: string): {
+  id: string
+  filename: string
+} {
+  const id = createHash('sha256').update(buffer).digest('hex').slice(0, 16)
+  const withDot = ext.startsWith('.') ? ext : `.${ext}`
+  return { id, filename: `${id}${withDot}` }
 }
 
 /**
- * Filename is derived from the final buffer (sha256), not randomBytes.
- * Same bytes ⇒ same name — safe even if prepare runs more than once.
- * Different bytes ⇒ different name — avoids media.filename UNIQUE collisions
- * when many uploads would otherwise become the same basename.webp.
- */
-export function contentFilename(
-  filename: string,
-  buffer: Buffer,
-  ext?: string
-): string {
-  const parsed = path.parse(filename)
-  const resolvedExt = ext ?? parsed.ext ?? ''
-  const withDot = resolvedExt
-    ? resolvedExt.startsWith('.')
-      ? resolvedExt
-      : `.${resolvedExt}`
-    : ''
-  const hash = createHash('sha256').update(buffer).digest('hex').slice(0, 8)
-  return `${stableBaseName(filename)}-${hash}${withDot}`
-}
-
-/**
- * Compress / resize raster images for fast Gitee Contents API uploads.
- * SVG/GIF pass through (size-checked) with a content-hashed filename.
- * Other rasters become content-hashed WebP aimed at TARGET_UPLOAD_BYTES.
+ * One-shot prepare for Media uploads:
+ * compress → hash final bytes → filename = that hash.
+ * Never call this from the Gitee adapter (that would rename after DB write).
  */
 export async function prepareUploadBuffer(file: {
   buffer: Buffer
   filename: string
   mimeType: string
-}): Promise<PreparedFile> {
-  const { buffer, filename, mimeType } = file
+}): Promise<PreparedMedia> {
+  const { buffer, mimeType } = file
 
   const passthrough =
     !mimeType.startsWith('image/') ||
@@ -74,34 +51,40 @@ export async function prepareUploadBuffer(file: {
   if (passthrough) {
     if (buffer.byteLength > MAX_UPLOAD_BYTES) {
       throw new GiteeStorageError(
-        `File too large (${buffer.byteLength} bytes). Max ${MAX_UPLOAD_BYTES} bytes for Gitee storage.`
+        `文件过大（${buffer.byteLength} 字节）。图床上限 ${MAX_UPLOAD_BYTES} 字节。`
       )
     }
-    return {
-      buffer,
-      filename: contentFilename(filename, buffer),
-      mimeType
-    }
+    const ext =
+      mimeType === 'image/svg+xml'
+        ? '.svg'
+        : mimeType === 'image/gif'
+          ? '.gif'
+          : '.bin'
+    const named = mediaFilenameFromBuffer(buffer, ext)
+    return { ...named, buffer, mimeType }
   }
 
   if (buffer.byteLength > MAX_INPUT_BYTES) {
     throw new GiteeStorageError(
-      `Source image too large (${buffer.byteLength} bytes). Max ${MAX_INPUT_BYTES} bytes before compression.`
+      `原图过大（${buffer.byteLength} 字节）。压缩前上限 ${MAX_INPUT_BYTES} 字节。`
     )
   }
 
-  // Already a small webp — keep bytes, hash the name from those bytes.
   if (mimeType === 'image/webp' && buffer.byteLength <= TARGET_UPLOAD_BYTES) {
+    const meta = await sharp(buffer, { failOn: 'none' }).metadata()
+    const named = mediaFilenameFromBuffer(buffer, '.webp')
     return {
+      ...named,
       buffer,
-      filename: contentFilename(filename, buffer, '.webp'),
-      mimeType
+      mimeType: 'image/webp',
+      width: meta.width,
+      height: meta.height
     }
   }
 
   const qualities = [78, 68, 58, 48, 38]
   let lastError: unknown
-  let smallest: PreparedFile | undefined
+  let smallest: { buffer: Buffer; width?: number; height?: number } | undefined
 
   for (const quality of qualities) {
     try {
@@ -117,25 +100,25 @@ export async function prepareUploadBuffer(file: {
         .webp({ quality, effort: 2 })
         .toBuffer({ resolveWithObject: true })
 
-      const candidate: PreparedFile = {
+      const candidate = {
         buffer: out.data,
-        // Name from final bytes so quality retries that land on the same
-        // buffer stay stable; different quality ⇒ different hash if bytes differ.
-        filename: contentFilename(filename, out.data, '.webp'),
-        mimeType: 'image/webp',
         width: out.info.width || meta.width,
         height: out.info.height || meta.height
       }
 
-      if (
-        !smallest ||
-        candidate.buffer.byteLength < smallest.buffer.byteLength
-      ) {
+      if (!smallest || candidate.buffer.byteLength < smallest.buffer.byteLength) {
         smallest = candidate
       }
 
       if (candidate.buffer.byteLength <= TARGET_UPLOAD_BYTES) {
-        return candidate
+        const named = mediaFilenameFromBuffer(candidate.buffer, '.webp')
+        return {
+          ...named,
+          buffer: candidate.buffer,
+          mimeType: 'image/webp',
+          width: candidate.width,
+          height: candidate.height
+        }
       }
     } catch (err) {
       lastError = err
@@ -143,12 +126,19 @@ export async function prepareUploadBuffer(file: {
   }
 
   if (smallest && smallest.buffer.byteLength <= MAX_UPLOAD_BYTES) {
-    return smallest
+    const named = mediaFilenameFromBuffer(smallest.buffer, '.webp')
+    return {
+      ...named,
+      buffer: smallest.buffer,
+      mimeType: 'image/webp',
+      width: smallest.width,
+      height: smallest.height
+    }
   }
 
   throw new GiteeStorageError(
-    `Could not compress image under ${MAX_UPLOAD_BYTES} bytes${
-      lastError instanceof Error ? `: ${lastError.message}` : ''
+    `无法将图片压到 ${MAX_UPLOAD_BYTES} 字节以内${
+      lastError instanceof Error ? `：${lastError.message}` : ''
     }`
   )
 }

@@ -137,7 +137,8 @@ Gitee Contents API 最终文件需 ≤ **2MB**。上传时会用 sharp 自动压
 2. **生产库还没建表**：Postgres 在生产不会自动 `push`。确认 Build Command 是 `pnpm run ci`，且构建日志跑过 `payload migrate`。缺 migration 时本地执行 `pnpm payload migrate:create` 后重新部署。
 
 **上传图片失败 / `ERR_CONNECTION_CLOSED` / Admin 报 `reading 'doc'` / `document with ID N could not be found`**  
-→ 常见链路：上传超时或 **filename 唯一冲突**（同名转 WebP）导致 Media 未入库，但 Admin 仍握着失效 ID。当前会压图并用**内容哈希**生成文件名（幂等），上传后校验 Gitee 路径存在。请删掉失效图后重新上传。其它原因：
+→ 媒体约定：**CMS `filename` = 图床对象名**（内容 sha 作 id，如 `a1b2….webp`）。只在 Media.beforeChange 压图改名一次，adapter 原样上传，不再二次改名。  
+若提示「相同图片已存在」：同一文件已在媒体库，直接选用即可。其它原因：
 1. 未配齐 `GITEE_OWNER` / `GITEE_REPO` / `GITEE_TOKEN`，或 Token 无仓库写权限  
 2. 文件超过 **2MB**（硬限制；上传会尽量压到约 512KB）  
 3. `413` / `FUNCTION_PAYLOAD_TOO_LARGE`：仍可能被 Vercel 函数体限制挡住，请先压图  
@@ -145,7 +146,7 @@ Gitee Contents API 最终文件需 ≤ **2MB**。上传时会用 sharp 自动压
 5. Alt 必填：抽屉里直接传图时会用文件名自动填充  
 
 **前台图片 404（Admin 里有图、Gitee 也有文件）**  
-→ 旧 bug：DB 文件名与 Gitee 对象名不一致。部署含内容哈希 + 上传校验的版本后不应再出现。已有脏数据可跑：  
+→ 旧 bug：DB 与 Gitee 文件名不一致。新逻辑下两者强制同名。历史脏数据可跑：  
 `SITE_URL=https://vlog.versakit.online node --env-file=.env scripts/repair-gitee-media.mjs`
 
 **前台看不到文章**  

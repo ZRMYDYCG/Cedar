@@ -4,7 +4,6 @@ import { getFileKey, getFilePrefix } from '@payloadcms/plugin-cloud-storage/util
 import {
   deleteGiteeFile,
   fetchGiteeRaw,
-  getGiteeFileMeta,
   GiteeStorageError,
   type GiteeConfig,
   uploadGiteeFile
@@ -37,6 +36,12 @@ function guessContentType(filename: string): string {
   }
 }
 
+/**
+ * Gitee adapter contract (do not break this):
+ * - CMS `media.filename` === Gitee object basename under the collection prefix
+ * - Never rename / recompress here — Media.beforeChange already finalized both
+ * - Old rows keep working: staticHandler reads whatever filename is in the DB
+ */
 export function createGiteeAdapter({
   config,
   cacheControlMaxAge = 60 * 60 * 24 * 365
@@ -44,20 +49,21 @@ export function createGiteeAdapter({
   return ({ collection, prefix: collectionPrefix = '' }): GeneratedAdapter => ({
     name: 'gitee',
     handleUpload: async ({ data, file }) => {
-      // Media.beforeChange already compressed + uniquified filename into
-      // req.file / data.filename. Do NOT call prepareUploadBuffer again —
-      // uniqueFilename() would invent a second name, upload that to Gitee,
-      // and leave the DB pointing at a missing object (frontend 404).
       const buffer = Buffer.isBuffer(file.buffer)
         ? file.buffer
         : Buffer.from(file.buffer)
 
+      if (!file.filename) {
+        throw new GiteeStorageError('缺少文件名：无法与图床路径对齐')
+      }
+
       if (buffer.byteLength > MAX_UPLOAD_BYTES) {
         throw new GiteeStorageError(
-          `File exceeds ${MAX_UPLOAD_BYTES} byte limit for Gitee Contents API`
+          `文件超过图床上限 ${MAX_UPLOAD_BYTES} 字节`
         )
       }
 
+      // Exact key: media/<cms-filename>
       const { fileKey } = getFileKey({
         collectionPrefix,
         docPrefix: data.prefix,
@@ -68,22 +74,10 @@ export function createGiteeAdapter({
         config,
         filePath: fileKey,
         buffer,
-        message: `upload ${fileKey}`
+        message: `media ${file.filename}`
       })
 
-      // Fail closed: DB filename must resolve on Gitee or Admin/frontend 404.
-      const meta = await getGiteeFileMeta({ config, filePath: fileKey })
-      if (!meta?.sha) {
-        throw new GiteeStorageError(
-          `Gitee upload did not persist expected path: ${fileKey}`
-        )
-      }
-
-      // Never return an object and never call payload.update here.
-      // After a slow Gitee round-trip the request's DB connection is often
-      // stale; update() then throws Payload "Not Found", the route 404/504s,
-      // and Admin crashes reading response.doc (ERR_CONNECTION_CLOSED).
-      // Filename/mime/size are written in Media beforeChange before create.
+      // Do not payload.update / do not invent a new name after upload.
     },
     handleDelete: async ({ doc, filename }) => {
       const { fileKey } = getFileKey({
@@ -99,7 +93,6 @@ export function createGiteeAdapter({
       })
     },
     generateURL: ({ filename, prefix }) => {
-      // Only used when disablePayloadAccessControl=true; default URLs stay on /api/media/file/...
       const prefixQuery = prefix
         ? `?prefix=${encodeURIComponent(prefix)}`
         : collectionPrefix
@@ -139,11 +132,15 @@ export function createGiteeAdapter({
         }
 
         const contentType =
-          upstream.headers.get('content-type') || guessContentType(params.filename)
+          upstream.headers.get('content-type') ||
+          guessContentType(params.filename)
 
         let headers = new Headers(incomingHeaders)
         headers.set('Content-Type', contentType)
-        headers.set('Cache-Control', `public, max-age=${cacheControlMaxAge}, immutable`)
+        headers.set(
+          'Cache-Control',
+          `public, max-age=${cacheControlMaxAge}, immutable`
+        )
 
         if (contentType === 'image/svg+xml') {
           headers.set('Content-Security-Policy', "script-src 'none'")
