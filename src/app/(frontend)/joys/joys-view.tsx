@@ -37,11 +37,6 @@ export default function JoysView({ joys }: { joys: JoyCard[] }) {
     <div className="mt-20">
       <Breadcrumbs current={title} />
       <div className="joys-page">
-        <header className="joys-header">
-          <h1>{title}</h1>
-          <p>{tJoys('subtitle')}</p>
-        </header>
-
         {joys.length === 0 ? (
           <EmptyState
             variant="panel"
