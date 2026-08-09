@@ -42,7 +42,9 @@ function formatMomentTime(
     return t('time-days-ago', { count: Math.floor(diff / day) })
   }
 
+  // Absolute dates always include year (relative labels cover the last 7 days).
   return new Intl.DateTimeFormat(locale, {
+    year: 'numeric',
     month: 'numeric',
     day: 'numeric',
     hour: '2-digit',
