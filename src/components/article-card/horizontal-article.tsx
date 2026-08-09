@@ -149,6 +149,8 @@ export default function HorizontalArticle({
 
           {post.text ? (
             <p>{post.text}</p>
+          ) : post.title ? (
+            null
           ) : (
             <LoadingSkeleton count={3} height="20px" />
           )}

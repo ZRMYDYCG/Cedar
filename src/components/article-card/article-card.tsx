@@ -133,7 +133,15 @@ export default function ArticleCard({ data: post }: ArticleCardProps) {
             <LoadingSkeleton height="3rem" />
           )}
 
-          {post.text ? <p>{post.text}</p> : <LoadingSkeleton count={4} height="16px" />}
+          {post.text ? (
+            <p>{post.text}</p>
+          ) : post.title ? (
+            // Title already means the card resolved — don't keep a forever skeleton
+            // when excerpt/body summary is simply empty.
+            null
+          ) : (
+            <LoadingSkeleton count={4} height="16px" />
+          )}
 
           {post.author && post.date ? (
             <div className="article-footer">

@@ -68,6 +68,46 @@ function estimateReading(text: string) {
   }
 }
 
+/** Walk Lexical JSON and collect visible text (no HTML round-trip). */
+function lexicalToPlainText(node: unknown): string {
+  if (!node || typeof node !== 'object') return ''
+
+  if (Array.isArray(node)) {
+    return node.map(lexicalToPlainText).filter(Boolean).join(' ')
+  }
+
+  const value = node as {
+    text?: unknown
+    type?: unknown
+    children?: unknown
+  }
+
+  if (typeof value.text === 'string' && value.text) {
+    return value.text
+  }
+
+  const childText = lexicalToPlainText(value.children)
+  if (!childText) return ''
+
+  // Separate block-level nodes so list items / paragraphs don't run together.
+  if (
+    value.type === 'paragraph' ||
+    value.type === 'heading' ||
+    value.type === 'listitem' ||
+    value.type === 'quote'
+  ) {
+    return `${childText} `
+  }
+
+  return childText
+}
+
+function truncatePlain(text: string, max = 160): string {
+  const normalized = text.replace(/\s+/g, ' ').trim()
+  if (normalized.length <= max) return normalized
+  return `${normalized.slice(0, max).trimEnd()}…`
+}
+
 export type PostCardWithHtml = PostCard & { html?: string }
 
 export function mapPostToCard(
@@ -75,13 +115,14 @@ export function mapPostToCard(
   options: { withHtml?: boolean; site?: SiteProfile } = {}
 ): PostCardWithHtml {
   const site = options.site || siteConfig.site
-  const excerpt = post.excerpt || ''
+  const excerpt = (post.excerpt || '').trim()
   const html = options.withHtml
     ? convertLexicalToHTML({ data: post.content })
     : undefined
-  const plain =
-    excerpt ||
-    (html ? html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim() : '')
+  // List cards used to leave `text` empty when excerpt was missing and
+  // withHtml was false — ArticleCard then showed a permanent skeleton.
+  const fromBody = truncatePlain(lexicalToPlainText(post.content))
+  const plain = excerpt || fromBody
 
   const tags = asTaxonomy(post.tags)
   return {
@@ -97,7 +138,9 @@ export function mapPostToCard(
     min_tags: tags.slice(0, 2),
     author: authorFrom(post.author, site),
     date: toPostDate(post.publishedAt || post.createdAt),
-    count_time: estimateReading(plain),
+    count_time: estimateReading(
+      excerpt || lexicalToPlainText(post.content).replace(/\s+/g, ' ').trim()
+    ),
     html
   }
 }
