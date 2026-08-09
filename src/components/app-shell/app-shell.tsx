@@ -1,8 +1,7 @@
 'use client'
 
 import Dia from '@/components/dia/dia'
-import FooterContainer from '@/components/footer/footer-container'
-import FooterLink from '@/components/footer/footer-link'
+import SiteFooter from '@/components/footer/site-footer'
 import HeaderMain from '@/components/header/header-main'
 import MobileMenu from '@/components/mobile-menu/mobile-menu'
 import ProgressBar from '@/components/progress-bar/progress-bar'
@@ -110,12 +109,10 @@ export default function AppShell({ children }: { children: ReactNode }) {
         >
           <div className="relative z-10">{children}</div>
         </div>
+        {/* Inside wrapper so body alt-bg does not show a dark strip above footer */}
+        <SiteFooter />
       </div>
 
-      <FooterLink />
-      <div style={cssVariables}>
-        <FooterContainer />
-      </div>
       <MobileMenu />
       <SearchModal />
       <Dia />
