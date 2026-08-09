@@ -16,17 +16,29 @@ import { Users } from './collections/Users'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
-const blobToken = process.env.BLOB_READ_WRITE_TOKEN
+// Read via process.env object so Next does not freeze an empty build-time value.
+const runtimeEnv = process.env
+const blobToken = runtimeEnv.BLOB_READ_WRITE_TOKEN
 const connectionString =
-  process.env.POSTGRES_URL || process.env.DATABASE_URL || ''
+  runtimeEnv.POSTGRES_URL || runtimeEnv.DATABASE_URL || ''
+const serverURL = runtimeEnv.NEXT_PUBLIC_SERVER_URL || undefined
 
-if (!process.env.PAYLOAD_SECRET) {
+if (!runtimeEnv.PAYLOAD_SECRET) {
   console.warn(
     '[Cedar] PAYLOAD_SECRET is missing — set it in Vercel Environment Variables'
   )
 }
 
+if (!blobToken) {
+  console.warn(
+    '[Cedar] BLOB_READ_WRITE_TOKEN missing — media uploads will hit Vercel 4.5MB limit (413)'
+  )
+} else {
+  console.info('[Cedar] Vercel Blob clientUploads enabled')
+}
+
 export default buildConfig({
+  serverURL,
   admin: {
     user: Users.slug,
     importMap: {
@@ -35,7 +47,7 @@ export default buildConfig({
   },
   collections: [Users, Media, Posts, Pages, Categories, Tags],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || 'INSECURE_MISSING_PAYLOAD_SECRET',
+  secret: runtimeEnv.PAYLOAD_SECRET || 'INSECURE_MISSING_PAYLOAD_SECRET',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts')
   },
@@ -54,12 +66,12 @@ export default buildConfig({
   sharp,
   plugins: [
     vercelBlobStorage({
-      enabled: Boolean(blobToken),
       // Bypass Vercel ~4.5MB function body limit (otherwise large uploads → 413)
       clientUploads: true,
       collections: {
         media: true
       },
+      enabled: Boolean(blobToken),
       token: blobToken
     })
   ]

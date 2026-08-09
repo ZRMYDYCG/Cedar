@@ -130,9 +130,9 @@
 
 **上传图片失败**  
 → 常见原因：
-1. 未配 `BLOB_READ_WRITE_TOKEN`，或 Blob 未绑定到该项目  
+1. 未配 `BLOB_READ_WRITE_TOKEN`，或 Blob 未绑定到该项目（Production 的 Build + Runtime 都要勾）  
 2. Blob store 必须是 **Public**（Payload 的 Vercel Blob 适配器不支持 Private）  
-3. `413 Content Too Large`：文件经服务端上传超过 Vercel ~4.5MB 限制。仓库已开 `clientUploads: true`（直传 Blob）；改完后需 Redeploy。临时也可先压图到 4MB 以下再传。
+3. `413` / `FUNCTION_PAYLOAD_TOO_LARGE`：大文件仍走了服务端。仓库已开 `clientUploads: true` 且关闭了 Media 裁剪。部署后请 **硬刷新 Admin**（或清缓存）再传；Vercel 函数日志应出现 `[Cedar] Vercel Blob clientUploads enabled`。临时也可先压图到 4MB 以下。
 
 **前台看不到文章**  
 → 确认 Admin 里状态是 **Published**（草稿不会出现在前台）。
