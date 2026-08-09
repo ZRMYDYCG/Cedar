@@ -1,4 +1,4 @@
-import { randomBytes } from 'crypto'
+import { createHash } from 'crypto'
 import path from 'path'
 import sharp from 'sharp'
 
@@ -10,6 +10,7 @@ import {
 import { GiteeStorageError } from './client'
 
 const MAX_EDGE = 1600
+const HASH_SUFFIX_RE = /-[0-9a-f]{8}$/i
 
 type PreparedFile = {
   buffer: Buffer
@@ -20,26 +21,43 @@ type PreparedFile = {
 }
 
 /**
- * media.filename has a UNIQUE index. Converting many uploads to the same
- * basename.webp (or re-uploading the same WeChat export name) caused
- * "Value must be unique" — Admin then kept a ghost ID that 404s on open.
+ * Stable basename: strip trailing content-hash suffixes so prepareUploadBuffer
+ * is idempotent (calling twice on the same bytes yields the same filename).
  */
-function uniqueFilename(filename: string, ext?: string): string {
+function stableBaseName(filename: string): string {
+  let name = path.parse(filename).name
+  while (HASH_SUFFIX_RE.test(name)) {
+    name = name.replace(HASH_SUFFIX_RE, '')
+  }
+  return name || 'upload'
+}
+
+/**
+ * Filename is derived from the final buffer (sha256), not randomBytes.
+ * Same bytes ⇒ same name — safe even if prepare runs more than once.
+ * Different bytes ⇒ different name — avoids media.filename UNIQUE collisions
+ * when many uploads would otherwise become the same basename.webp.
+ */
+export function contentFilename(
+  filename: string,
+  buffer: Buffer,
+  ext?: string
+): string {
   const parsed = path.parse(filename)
-  const suffix = randomBytes(4).toString('hex')
   const resolvedExt = ext ?? parsed.ext ?? ''
   const withDot = resolvedExt
     ? resolvedExt.startsWith('.')
       ? resolvedExt
       : `.${resolvedExt}`
     : ''
-  return `${parsed.name}-${suffix}${withDot}`
+  const hash = createHash('sha256').update(buffer).digest('hex').slice(0, 8)
+  return `${stableBaseName(filename)}-${hash}${withDot}`
 }
 
 /**
  * Compress / resize raster images for fast Gitee Contents API uploads.
- * SVG/GIF pass through (size-checked) with a unique filename.
- * Other rasters become uniquely-named WebP aimed at TARGET_UPLOAD_BYTES.
+ * SVG/GIF pass through (size-checked) with a content-hashed filename.
+ * Other rasters become content-hashed WebP aimed at TARGET_UPLOAD_BYTES.
  */
 export async function prepareUploadBuffer(file: {
   buffer: Buffer
@@ -59,7 +77,11 @@ export async function prepareUploadBuffer(file: {
         `File too large (${buffer.byteLength} bytes). Max ${MAX_UPLOAD_BYTES} bytes for Gitee storage.`
       )
     }
-    return { buffer, filename: uniqueFilename(filename), mimeType }
+    return {
+      buffer,
+      filename: contentFilename(filename, buffer),
+      mimeType
+    }
   }
 
   if (buffer.byteLength > MAX_INPUT_BYTES) {
@@ -68,14 +90,11 @@ export async function prepareUploadBuffer(file: {
     )
   }
 
-  // Already a small webp — keep bytes, still uniquify name to avoid collisions.
-  if (
-    mimeType === 'image/webp' &&
-    buffer.byteLength <= TARGET_UPLOAD_BYTES
-  ) {
+  // Already a small webp — keep bytes, hash the name from those bytes.
+  if (mimeType === 'image/webp' && buffer.byteLength <= TARGET_UPLOAD_BYTES) {
     return {
       buffer,
-      filename: uniqueFilename(filename, '.webp'),
+      filename: contentFilename(filename, buffer, '.webp'),
       mimeType
     }
   }
@@ -83,8 +102,6 @@ export async function prepareUploadBuffer(file: {
   const qualities = [78, 68, 58, 48, 38]
   let lastError: unknown
   let smallest: PreparedFile | undefined
-  // One unique name for this encode pass so quality retries don't invent new names.
-  const webpName = uniqueFilename(filename, '.webp')
 
   for (const quality of qualities) {
     try {
@@ -102,7 +119,9 @@ export async function prepareUploadBuffer(file: {
 
       const candidate: PreparedFile = {
         buffer: out.data,
-        filename: webpName,
+        // Name from final bytes so quality retries that land on the same
+        // buffer stay stable; different quality ⇒ different hash if bytes differ.
+        filename: contentFilename(filename, out.data, '.webp'),
         mimeType: 'image/webp',
         width: out.info.width || meta.width,
         height: out.info.height || meta.height

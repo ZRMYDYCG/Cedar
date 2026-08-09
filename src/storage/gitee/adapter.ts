@@ -4,6 +4,7 @@ import { getFileKey, getFilePrefix } from '@payloadcms/plugin-cloud-storage/util
 import {
   deleteGiteeFile,
   fetchGiteeRaw,
+  getGiteeFileMeta,
   GiteeStorageError,
   type GiteeConfig,
   uploadGiteeFile
@@ -69,6 +70,14 @@ export function createGiteeAdapter({
         buffer,
         message: `upload ${fileKey}`
       })
+
+      // Fail closed: DB filename must resolve on Gitee or Admin/frontend 404.
+      const meta = await getGiteeFileMeta({ config, filePath: fileKey })
+      if (!meta?.sha) {
+        throw new GiteeStorageError(
+          `Gitee upload did not persist expected path: ${fileKey}`
+        )
+      }
 
       // Never return an object and never call payload.update here.
       // After a slow Gitee round-trip the request's DB connection is often
