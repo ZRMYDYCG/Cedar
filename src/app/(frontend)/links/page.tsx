@@ -5,7 +5,11 @@ import Comment from '@/components/comment/comment'
 import LinkBox from '@/components/link/link-box'
 import LinkCategoryList from '@/components/link/link-category-list'
 import PostStats from '@/components/post/post-stats'
-import { buildFriendPairs, siteFriends } from '@/data/site-taxonomy'
+import {
+  buildFriendPairs,
+  groupFriendsByLabel,
+  siteFriends
+} from '@/data/site-taxonomy'
 import { useAppStore } from '@/stores/app'
 import { useTranslations } from 'next-intl'
 import { useEffect } from 'react'
@@ -25,14 +29,7 @@ export default function LinksPage() {
     document.getElementById('content')?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  const categorized = {
-    'settings.links-badge-tech': siteFriends.filter(
-      f => f.label !== 'links-badge-vip'
-    ),
-    'settings.links-badge-vip': siteFriends.filter(
-      f => f.label === 'links-badge-vip'
-    )
-  }
+  const categorized = groupFriendsByLabel(siteFriends)
 
   return (
     <div className="mt-20">
