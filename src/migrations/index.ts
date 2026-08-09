@@ -4,6 +4,7 @@ import * as migration_20260809_080000_moments from './20260809_080000_moments'
 import * as migration_20260809_174500_site_settings from './20260809_174500_site_settings'
 import * as migration_20260809_213000_comments from './20260809_213000_comments'
 import * as migration_20260809_220000_joys from './20260809_220000_joys'
+import * as migration_20260809_223000_joys_column_names from './20260809_223000_joys_column_names'
 
 export const migrations = [
   {
@@ -35,5 +36,10 @@ export const migrations = [
     up: migration_20260809_220000_joys.up,
     down: migration_20260809_220000_joys.down,
     name: '20260809_220000_joys'
+  },
+  {
+    up: migration_20260809_223000_joys_column_names.up,
+    down: migration_20260809_223000_joys_column_names.down,
+    name: '20260809_223000_joys_column_names'
   }
 ]

@@ -1,10 +1,8 @@
 /**
- * CI-safe migrate:
- * Production DBs often contain a payload_migrations row with batch=-1 from
- * earlier "dev push". Payload then prompts; under CI that prompt auto-declines
- * and exits 0 without applying pending migrations (joys table never created).
+ * CI-safe migrate for Vercel builds.
  *
- * Clear those sentinel rows, then run migrate with no interactive gate.
+ * Clears payload_migrations batch=-1 (dev push sentinel) that otherwise makes
+ * Payload's migrate prompt auto-decline under CI=true, then runs migrate().
  */
 import config from '@payload-config'
 import { getPayload } from 'payload'
@@ -27,7 +25,9 @@ for (const doc of dirty.docs) {
     id: doc.id,
     overrideAccess: true
   })
-  console.log(`[force-migrate] removed sentinel id=${doc.id} name=${doc.name}`)
+  console.log(
+    `[force-migrate] removed sentinel id=${doc.id} name=${doc.name}`
+  )
 }
 
 if (typeof payload.db.migrate !== 'function') {
@@ -35,5 +35,20 @@ if (typeof payload.db.migrate !== 'function') {
 }
 
 await payload.db.migrate()
+
+try {
+  const joys = await payload.find({
+    collection: 'joys',
+    limit: 1,
+    depth: 0,
+    overrideAccess: true
+  })
+  console.log(`[force-migrate] joys OK (totalDocs=${joys.totalDocs})`)
+} catch (err) {
+  const message = err instanceof Error ? err.message : String(err)
+  console.error(`[force-migrate] joys still broken: ${message}`)
+  process.exit(1)
+}
+
 console.log('[force-migrate] complete')
 process.exit(0)
