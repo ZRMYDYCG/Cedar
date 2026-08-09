@@ -7,17 +7,18 @@
 @import './comment.css';
 @import './moments.css'; /* moments cover v5 */
 @import './empty-state.css';
+@import './article-tabs.css';
 
 /*
  * Vue App.vue / index.scss body stack:
- *   html/body → --background-primary-alt (#0d0b12 dark / #fafafa light)
- *   .app-wrapper → --background-primary (#1a1a1a / #f1f3f9)
+ *   html/body → --background-primary-alt (#051208 dark / #f7faf8 light)
+ *   .app-wrapper → --background-primary (#0f1a12 / #f3f7f4)
  * Theme class must live on html+body so vars resolve before paint.
  */
 html,
 body {
   min-height: 100%;
-  background: var(--background-primary-alt, #0d0b12);
+  background: var(--background-primary-alt, #051208);
 }
 
 body {
@@ -73,7 +74,7 @@ body::-webkit-scrollbar,
   height: 2px;
   border-radius: 999px;
   transform: translateY(-50%);
-  background: var(--main-gradient, linear-gradient(130deg, #24c6dc, #ff0099));
+  background: var(--main-gradient, linear-gradient(130deg, #3dba60, #7d5a44));
   opacity: 0.85;
 }
 
@@ -84,9 +85,9 @@ body::-webkit-scrollbar,
   width: 2.75rem;
   height: 2.75rem;
   object-fit: cover;
-  background: var(--background-primary, #1a1a1a);
+  background: var(--background-primary, #0f1a12);
   box-shadow:
-    0 0 0 4px var(--background-primary, #1a1a1a),
+    0 0 0 4px var(--background-primary, #0f1a12),
     0 6px 18px rgb(0 0 0 / 0.28);
 }
 

@@ -133,7 +133,7 @@
 }
 
 .theme-dark .moment-nick {
-  color: color-mix(in srgb, var(--text-accent, #24c6dc) 82%, #9ec9ff);
+  color: color-mix(in srgb, var(--text-accent, #3dba60) 82%, #86efac);
 }
 
 .moment-text {
@@ -203,7 +203,7 @@
 }
 
 .moment-cell:focus-visible {
-  outline: 2px solid var(--text-accent, #24c6dc);
+  outline: 2px solid var(--text-accent, #3dba60);
   outline-offset: 2px;
 }
 
@@ -222,7 +222,7 @@
 }
 
 .theme-dark .moment-place {
-  color: color-mix(in srgb, var(--text-accent, #24c6dc) 70%, #fff);
+  color: color-mix(in srgb, var(--text-accent, #3dba60) 70%, #fff);
 }
 
 .moment-lightbox {

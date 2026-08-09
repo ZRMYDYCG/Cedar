@@ -41,7 +41,7 @@ export type SiteConfig = {
 }
 
 const gradient =
-  'linear-gradient(130deg, #24c6dc, #5433ff 41.07%, #ff0099 76.05%)'
+  'linear-gradient(130deg, #3dba60, #4ade80 41.07%, #7d5a44 76.05%)'
 
 export const siteConfig: SiteConfig = {
   site: {
@@ -58,9 +58,9 @@ export const siteConfig: SiteConfig = {
     feature: true,
     header_gradient_css: gradient,
     gradient: {
-      color_1: '#24c6dc',
-      color_2: '#5433ff',
-      color_3: '#ff0099'
+      color_1: '#3dba60',
+      color_2: '#4ade80',
+      color_3: '#7d5a44'
     },
     background_gradient_style: {
       background: gradient,

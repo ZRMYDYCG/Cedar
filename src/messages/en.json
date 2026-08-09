@@ -64,6 +64,8 @@
     "visitor_count": "Total visitor count",
     "visit_count": "Total visit count",
     "button-all": "All",
+    "expand-categories": "Expand categories",
+    "collapse-categories": "Collapse categories",
     "paginator": {
       "newer": "Pre",
       "older": "Next",

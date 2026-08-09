@@ -33,7 +33,7 @@ export default function ToggleSwitch({
         className="slider"
         style={{
           transform: `translateX(${status ? '18px' : '0'})`,
-          backgroundColor: status ? '#6e40c9' : '#100E16'
+          backgroundColor: status ? '#3dba60' : '#051208'
         }}
       >
         {children}

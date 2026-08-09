@@ -1,0 +1,162 @@
+/* Home category filter — overrides compiled aurora `.tab` rules */
+
+.article-tabs {
+  position: relative;
+  margin-bottom: 1.75rem;
+}
+
+.article-tabs .tab {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 0.45rem;
+  height: 3.25rem;
+  margin-bottom: 0;
+  overflow: hidden;
+  padding: 0.5rem 2.85rem 0.5rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--text-bright) 10%, transparent);
+  border-radius: 1rem;
+  background: color-mix(
+    in srgb,
+    var(--background-secondary, var(--background-primary)) 88%,
+    transparent
+  );
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 6%, transparent) inset,
+    0 10px 28px color-mix(in srgb, #000 14%, transparent);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  transition: height 0.35s ease;
+}
+
+.article-tabs .tab.expanded-tab {
+  height: auto;
+  overflow: visible;
+}
+
+.article-tabs .tab li {
+  display: inline-flex;
+  align-items: stretch;
+  margin: 0;
+  cursor: pointer;
+  transition:
+    opacity 0.2s ease,
+    transform 0.15s ease;
+}
+
+.article-tabs .tab li:hover {
+  opacity: 0.82;
+}
+
+.article-tabs .tab li:active {
+  transform: scale(0.98);
+}
+
+.article-tabs .tab li.active {
+  text-shadow: none;
+  box-shadow: none;
+}
+
+.article-tabs .tab li span {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.42rem 0.85rem;
+  border-radius: 0.7rem;
+  background: color-mix(in srgb, var(--background-primary) 72%, transparent);
+  color: var(--text-normal);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.article-tabs .tab li span.first-tab {
+  padding-inline: 1.05rem;
+  border-radius: 0.7rem;
+}
+
+.article-tabs .tab li b {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 1px;
+  padding: 0.42rem 0.55rem;
+  border-radius: 0 0.7rem 0.7rem 0;
+  background: color-mix(in srgb, var(--background-primary) 72%, transparent);
+  color: var(--text-accent, var(--text-dim));
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0.9;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.article-tabs .tab li:not(:has(b)) span,
+.article-tabs .tab li span.first-tab {
+  border-radius: 0.7rem;
+}
+
+.article-tabs .tab li:has(b) span {
+  border-radius: 0.7rem 0 0 0.7rem;
+}
+
+.article-tabs .tab li.active span,
+.article-tabs .tab li.active b {
+  color: #fff;
+  opacity: 1;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.28);
+  box-shadow: 0 6px 14px color-mix(in srgb, #000 18%, transparent);
+}
+
+.article-tabs .tab-expander {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.55rem;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 2.05rem;
+  height: 2.05rem;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--background-primary) 70%, transparent);
+  color: var(--text-bright);
+  cursor: pointer;
+  opacity: 0.88;
+  transition:
+    opacity 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.article-tabs .tab-expander:hover {
+  opacity: 1;
+  background: color-mix(in srgb, var(--background-primary) 88%, transparent);
+}
+
+.article-tabs .tab-expander:active {
+  transform: scale(0.96);
+}
+
+.article-tabs .tab-expander svg {
+  transition: transform 0.35s ease;
+}
+
+.article-tabs .tab-expander.expanded svg {
+  transform: rotate(180deg);
+}
+
+.theme-light .article-tabs .tab {
+  border-color: color-mix(in srgb, #000 8%, transparent);
+  background: color-mix(in srgb, #fff 82%, transparent);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 70%, transparent) inset,
+    0 10px 28px color-mix(in srgb, #000 8%, transparent);
+}
+
+.theme-light .article-tabs .tab li span,
+.theme-light .article-tabs .tab li b,
+.theme-light .article-tabs .tab-expander {
+  background: color-mix(in srgb, var(--background-primary) 55%, #fff);
+}

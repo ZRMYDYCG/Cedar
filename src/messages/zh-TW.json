@@ -64,6 +64,8 @@
     "visitor_count": "總共訪客數",
     "visit_count": "總共訪問數",
     "button-all": "全部",
+    "expand-categories": "展開分類",
+    "collapse-categories": "收起分類",
     "paginator": {
       "newer": "新的",
       "older": "以往",

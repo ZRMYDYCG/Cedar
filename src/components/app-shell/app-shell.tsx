@@ -79,7 +79,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
             backgroundImage: hasHeaderImage
               ? `url(${headerImage}), url(/default-cover.jpg)`
               : undefined,
-            backgroundColor: '#0d0b12',
+            backgroundColor: '#051208',
             opacity: hasHeaderImage ? 0.2 : 0
           }}
         />

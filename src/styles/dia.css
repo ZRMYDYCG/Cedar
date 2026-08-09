@@ -32,10 +32,10 @@
   --aurora-dia--linear-gradient: var(--main-gradient);
   --aurora-dia--linear-gradient-hover: linear-gradient(
     to bottom,
-    #25b0cc,
-    #3f60de
+    #3dba60,
+    #2d8a4e
   );
-  --aurora-dia--platform-light: #b712ac;
+  --aurora-dia--platform-light: #7d5a44;
 }
 
 .Aurora-Dia {
@@ -57,7 +57,7 @@
   left: -1px;
   width: calc(100% + 3px);
   height: calc(100% + 2px);
-  background-color: #2cdcff;
+  background-color: #4ade80;
   background: var(--aurora-dia--linear-gradient);
   border-radius: 45%;
   opacity: 0;
@@ -165,8 +165,8 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   padding: 0 0.1rem;
-  color: #7aa2f7;
-  background-color: #7aa2f7;
+  color: #6b9f7a;
+  background-color: #6b9f7a;
   background-image: var(--strong-gradient);
 }
 
@@ -251,20 +251,20 @@
 }
 @keyframes shake-pulse {
   0%, 20%, 40%, 60%, 80%, 100% {
-    box-shadow: 0 0 var(--auora-dia--platform-size) #2cdcff, 0 0 15px #2cdcff inset;
+    box-shadow: 0 0 var(--auora-dia--platform-size) #4ade80, 0 0 15px #4ade80 inset;
   }
   10%, 25%, 35%, 50%, 65% {
-    box-shadow: 0 0 var(--auora-dia--platform-size-shake-1) #2cdcff, 0 0 15px #2cdcff inset;
+    box-shadow: 0 0 var(--auora-dia--platform-size-shake-1) #4ade80, 0 0 15px #4ade80 inset;
   }
   15%, 30%, 45%, 55%, 70% {
-    box-shadow: 0 0 var(--auora-dia--platform-size-shake-2) #2cdcff, 0 0 15px #2cdcff inset;
+    box-shadow: 0 0 var(--auora-dia--platform-size-shake-2) #4ade80, 0 0 15px #4ade80 inset;
   }
 }
 .Aurora-Dia--tips > span {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   padding: 0 0.05rem;
-  color: #7aa2f7;
-  background-color: #7aa2f7;
+  color: #6b9f7a;
+  background-color: #6b9f7a;
   background-image: var(--strong-gradient);
 }

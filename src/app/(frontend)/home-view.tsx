@@ -74,47 +74,62 @@ export default function HomeView({
 
       <div className="main-grid" id="article-list">
         <div className="relative flex flex-col">
-          <ul className={`tab ${expanded ? 'expanded-tab' : ''}`}>
-            <li
-              className={activeTab === '' ? 'active' : ''}
-              onClick={() => {
-                setActiveTab('')
-                setPage(1)
-              }}
-            >
-              <span className="first-tab" style={activeTabStyle('')}>
-                {t('button-all')}
-              </span>
-            </li>
-            {categories.map(category => (
-              <li
-                key={category.slug}
-                className={activeTab === category.slug ? 'active' : ''}
-                onClick={() => {
-                  setActiveTab(category.slug)
-                  setPage(1)
-                }}
-              >
-                <span style={activeTabStyle(category.slug)}>
-                  {category.name}
-                </span>
-                <b>{category.count}</b>
-              </li>
-            ))}
-          </ul>
+          {posts.length > 0 ? (
+            <div className="article-tabs">
+              <ul className={`tab ${expanded ? 'expanded-tab' : ''}`}>
+                <li
+                  className={activeTab === '' ? 'active' : ''}
+                  onClick={() => {
+                    setActiveTab('')
+                    setPage(1)
+                  }}
+                >
+                  <span className="first-tab" style={activeTabStyle('')}>
+                    {t('button-all')}
+                  </span>
+                </li>
+                {categories.map(category => (
+                  <li
+                    key={category.slug}
+                    className={activeTab === category.slug ? 'active' : ''}
+                    onClick={() => {
+                      setActiveTab(category.slug)
+                      setPage(1)
+                    }}
+                  >
+                    <span style={activeTabStyle(category.slug)}>
+                      {category.name}
+                    </span>
+                    <b style={activeTabStyle(category.slug)}>
+                      {category.count}
+                    </b>
+                  </li>
+                ))}
+              </ul>
 
-          <span
-            className={`tab-expander ${expanded ? 'expanded' : ''}`}
-            onClick={() => setExpanded(value => !value)}
-          >
-            <SvgIcon
-              iconClass="chevron"
-              height="1.2rem"
-              width="1.2rem"
-              fill="var(--text-normal)"
-              stroke="var(--text-normal)"
-            />
-          </span>
+              {categories.length > 0 ? (
+                <button
+                  type="button"
+                  className={`tab-expander ${expanded ? 'expanded' : ''}`}
+                  aria-expanded={expanded}
+                  aria-label={
+                    expanded
+                      ? t('collapse-categories')
+                      : t('expand-categories')
+                  }
+                  onClick={() => setExpanded(value => !value)}
+                >
+                  <SvgIcon
+                    iconClass="chevron"
+                    height="1.05rem"
+                    width="1.05rem"
+                    fill="var(--text-normal)"
+                    stroke="var(--text-normal)"
+                  />
+                </button>
+              ) : null}
+            </div>
+          ) : null}
 
           {pagePosts.length > 0 ? (
             <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
