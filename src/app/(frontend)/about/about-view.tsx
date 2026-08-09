@@ -28,7 +28,7 @@ export default function AboutView({
     <div className="mt-20">
       <Breadcrumbs current={pageTitle} />
       <PageContent title={pageTitle} comments html={html}>
-        <Comment title={pageTitle} uid="about" />
+        <Comment title={pageTitle} uid="about" targetKind="about" />
       </PageContent>
     </div>
   )

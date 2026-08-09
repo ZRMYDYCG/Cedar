@@ -28,7 +28,7 @@ export default function CustomPage() {
         comments
         html={`<p>Custom page for <strong>${params.slug}</strong>. Content will come from Payload pages collection.</p>`}
       >
-        <Comment title={title} uid={params.slug} />
+        <Comment title={title} uid={params.slug} targetKind="page" />
       </PageContent>
     </div>
   )

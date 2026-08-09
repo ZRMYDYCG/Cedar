@@ -59,7 +59,12 @@ export default function LinksPage() {
         </div>
 
         <div id="comments">
-          <Comment title={pageTitle} uid="links" body="friends" />
+          <Comment
+            title={pageTitle}
+            uid="links"
+            targetKind="links"
+            body="friends"
+          />
         </div>
       </div>
     </div>

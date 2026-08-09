@@ -1,7 +1,7 @@
 # CMS Comments Design
 
 Date: 2026-08-09  
-Status: approved (product); awaiting implementation plan  
+Status: implemented (v1)  
 Project: Cedar (`aurora-web`)
 
 ## Goal

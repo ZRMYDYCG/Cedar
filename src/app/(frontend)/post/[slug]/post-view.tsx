@@ -135,7 +135,12 @@ export default function PostView({ post, prev, next }: PostViewProps) {
           </div>
 
           <div id="comments">
-            <Comment title={post.title} uid={post.slug} body={post.text} />
+            <Comment
+              title={post.title}
+              uid={post.slug}
+              targetKind="post"
+              body={post.text}
+            />
           </div>
         </div>
         <div>

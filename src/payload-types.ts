@@ -74,6 +74,7 @@ export interface Config {
     pages: Page;
     categories: Category;
     tags: Tag;
+    comments: Comment;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -88,6 +89,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
+    comments: CommentsSelect<false> | CommentsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -165,7 +167,7 @@ export interface User {
 export interface Media {
   id: number;
   /**
-   * 留空时会用文件名自动填充
+   * 留空时用文件名（内容 id）自动填充
    */
   alt: string;
   prefix?: string | null;
@@ -292,6 +294,34 @@ export interface Page {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * 站点前台评论（提交即公开，可在此删除垃圾评论）
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments".
+ */
+export interface Comment {
+  id: number;
+  /**
+   * 对应前台 Comment uid（文章 slug / about / links 等）
+   */
+  target: string;
+  targetKind: 'post' | 'page' | 'about' | 'links';
+  content: string;
+  authorName: string;
+  authorEmail?: string | null;
+  authorUrl?: string | null;
+  /**
+   * 关联后前台显示「博主」标识
+   */
+  author?: (number | null) | User;
+  /**
+   * 一层回复：只能指向顶级评论
+   */
+  parent?: (number | null) | Comment;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -342,6 +372,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'tags';
         value: number | Tag;
+      } | null)
+    | ({
+        relationTo: 'comments';
+        value: number | Comment;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -494,6 +528,22 @@ export interface CategoriesSelect<T extends boolean = true> {
 export interface TagsSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments_select".
+ */
+export interface CommentsSelect<T extends boolean = true> {
+  target?: T;
+  targetKind?: T;
+  content?: T;
+  authorName?: T;
+  authorEmail?: T;
+  authorUrl?: T;
+  author?: T;
+  parent?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -29,6 +29,22 @@
     "time-hours-ago": "{count}h ago",
     "time-days-ago": "{count}d ago"
   },
+  "comments": {
+    "placeholder-name": "Name (required)",
+    "placeholder-email": "Email (optional)",
+    "placeholder-url": "Website (optional)",
+    "placeholder-content": "Write a comment…",
+    "submit": "Post comment",
+    "submitting": "Posting…",
+    "loading": "Loading comments…",
+    "reply": "Reply",
+    "replying-to": "Replying to @{name}",
+    "cancel-reply": "Cancel",
+    "admin-badge": "Author",
+    "error-generic": "Failed to post. Please try again.",
+    "missing-target": "Comments unavailable",
+    "empty": "No comments yet. Be the first!"
+  },
   "footer": {
     "label": "Footer",
     "tagline": "Writing slowly under the cedar"

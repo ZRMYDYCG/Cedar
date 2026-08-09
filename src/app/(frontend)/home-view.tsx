@@ -11,6 +11,7 @@ import Sidebar from '@/components/sidebar/sidebar'
 import TagBox from '@/components/sidebar/tag-box'
 import Sticky from '@/components/sticky/sticky'
 import SvgIcon from '@/components/svg-icon/svg-icon'
+import type { CommentCard } from '@/data/cms/comments'
 import type { TaxonomyItem } from '@/data/site-taxonomy'
 import { useAppStore } from '@/stores/app'
 import type { PostCard } from '@/types/post'
@@ -23,6 +24,7 @@ type HomeViewProps = {
   featureList: PostCard[]
   categories: TaxonomyItem[]
   tags: TaxonomyItem[]
+  recentComments?: CommentCard[]
   stats: {
     word_count: number
     post_count: number
@@ -37,6 +39,7 @@ export default function HomeView({
   featureList,
   categories,
   tags,
+  recentComments = [],
   stats
 }: HomeViewProps) {
   const t = useTranslations('settings')
@@ -157,7 +160,7 @@ export default function HomeView({
         <div>
           <Sidebar>
             <Profile stats={stats} />
-            <RecentComment />
+            <RecentComment comments={recentComments} />
             <Sticky stickyTop={95}>
               <TagBox tags={tags} />
             </Sticky>

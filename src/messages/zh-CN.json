@@ -29,6 +29,22 @@
     "time-hours-ago": "{count} 小时前",
     "time-days-ago": "{count} 天前"
   },
+  "comments": {
+    "placeholder-name": "昵称（必填）",
+    "placeholder-email": "邮箱（选填）",
+    "placeholder-url": "网站（选填）",
+    "placeholder-content": "说点什么…",
+    "submit": "发表评论",
+    "submitting": "提交中…",
+    "loading": "加载评论中…",
+    "reply": "回复",
+    "replying-to": "回复 @{name}",
+    "cancel-reply": "取消",
+    "admin-badge": "博主",
+    "error-generic": "提交失败，请稍后再试",
+    "missing-target": "无法加载评论区",
+    "empty": "还没有评论，来抢沙发吧"
+  },
   "footer": {
     "label": "页脚",
     "tagline": "在雪松下慢慢写"

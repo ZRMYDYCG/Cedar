@@ -1,3 +1,162 @@
+/* Cedar first-party comments */
+.cedar-comments .cedar-comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.cedar-comments .cedar-comment-fields {
+  display: grid;
+  gap: 0.5rem;
+}
+@media (min-width: 768px) {
+  .cedar-comments .cedar-comment-fields {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.cedar-comments .cedar-comment-fields input,
+.cedar-comments textarea {
+  width: 100%;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: var(--background-primary);
+  color: var(--text-normal);
+  padding: 0.65rem 0.85rem;
+}
+.cedar-comments textarea {
+  resize: vertical;
+  min-height: 6rem;
+}
+.cedar-comments .cedar-comment-hp {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.cedar-comments .cedar-comment-submit {
+  align-self: flex-start;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.55rem 1.25rem;
+  color: #fff;
+  background: var(--main-gradient);
+  cursor: pointer;
+  transition: var(--trans-ease);
+}
+.cedar-comments .cedar-comment-submit:hover:not(:disabled) {
+  opacity: 0.7;
+}
+.cedar-comments .cedar-comment-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.cedar-comments .cedar-comment-error {
+  color: #f87171;
+  font-size: 0.875rem;
+}
+.cedar-comments .cedar-comment-replying {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-dim);
+}
+.cedar-comments .cedar-comment-replying button {
+  border: none;
+  background: transparent;
+  color: var(--text-accent);
+  cursor: pointer;
+}
+.cedar-comment-roots,
+.cedar-comment-replies {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.cedar-comment-card {
+  background-color: var(--background-primary);
+  border-radius: 0.5rem;
+  padding: 1rem 1.1rem;
+  transition: var(--trans-ease);
+}
+.cedar-comment-card:hover {
+  box-shadow: var(--accent-shadow);
+}
+.cedar-comment-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+.cedar-comment-name {
+  color: var(--text-accent);
+  font-weight: 700;
+  font-size: 1rem;
+}
+.cedar-comment-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 0.25rem;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.7rem;
+  color: #fff;
+  background: var(--main-gradient);
+}
+.cedar-comment-body {
+  margin: 0;
+  color: var(--text-normal);
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.6;
+}
+.cedar-comment-reply-btn {
+  margin-top: 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0;
+}
+.cedar-comment-reply-btn:hover {
+  color: var(--text-accent);
+}
+.cedar-comment-replies {
+  margin-top: 0.75rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--bg-accent-55);
+}
+.cedar-recent-comments {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.cedar-recent-comments a {
+  display: block;
+  color: inherit;
+}
+.cedar-recent-comments strong {
+  color: var(--text-accent);
+  margin-right: 0.35rem;
+}
+.cedar-recent-comments p {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.45;
+}
+
 #vcomments .vwrap {
   border-radius: 0.75rem;
   background-color: var(--background-primary);

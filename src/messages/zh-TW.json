@@ -29,6 +29,22 @@
     "time-hours-ago": "{count} 小時前",
     "time-days-ago": "{count} 天前"
   },
+  "comments": {
+    "placeholder-name": "暱稱（必填）",
+    "placeholder-email": "郵箱（選填）",
+    "placeholder-url": "網站（選填）",
+    "placeholder-content": "說點什麼…",
+    "submit": "發表評論",
+    "submitting": "提交中…",
+    "loading": "加載評論中…",
+    "reply": "回覆",
+    "replying-to": "回覆 @{name}",
+    "cancel-reply": "取消",
+    "admin-badge": "博主",
+    "error-generic": "提交失敗，請稍後再試",
+    "missing-target": "無法加載評論區",
+    "empty": "還沒有評論，來搶沙發吧"
+  },
   "footer": {
     "label": "頁腳",
     "tagline": "在雪松下慢慢寫"
