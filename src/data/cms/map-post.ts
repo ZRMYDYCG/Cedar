@@ -3,6 +3,11 @@ import type { Category, Media, Post, Tag, User } from '@/payload-types'
 import type { PostCard, PostDate, PostTaxonomy } from '@/types/post'
 import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 
+type SiteProfile = Pick<
+  (typeof siteConfig)['site'],
+  'author' | 'avatar' | 'nick'
+>
+
 function asTaxonomy(
   items: (number | Category | Tag)[] | null | undefined
 ): PostTaxonomy[] {
@@ -33,22 +38,22 @@ function mediaUrl(cover: Post['cover'], coverUrl?: string | null): string {
   return '/default-cover.jpg'
 }
 
-function authorFrom(user: Post['author']) {
+function authorFrom(user: Post['author'], site: SiteProfile = siteConfig.site) {
   if (user && typeof user === 'object') {
     const u = user as User
     const avatar =
       u.avatar && typeof u.avatar === 'object'
-        ? (u.avatar as Media).url || siteConfig.site.avatar
-        : siteConfig.site.avatar
+        ? (u.avatar as Media).url || site.avatar
+        : site.avatar
     return {
-      name: u.name || siteConfig.site.author,
-      avatar: avatar || siteConfig.site.avatar,
+      name: u.name || site.author,
+      avatar: avatar || site.avatar,
       link: '/'
     }
   }
   return {
-    name: siteConfig.site.author,
-    avatar: siteConfig.site.avatar,
+    name: site.author,
+    avatar: site.avatar,
     link: '/'
   }
 }
@@ -67,8 +72,9 @@ export type PostCardWithHtml = PostCard & { html?: string }
 
 export function mapPostToCard(
   post: Post,
-  options: { withHtml?: boolean } = {}
+  options: { withHtml?: boolean; site?: SiteProfile } = {}
 ): PostCardWithHtml {
+  const site = options.site || siteConfig.site
   const excerpt = post.excerpt || ''
   const html = options.withHtml
     ? convertLexicalToHTML({ data: post.content })
@@ -89,7 +95,7 @@ export function mapPostToCard(
     categories: asTaxonomy(post.categories),
     tags,
     min_tags: tags.slice(0, 2),
-    author: authorFrom(post.author),
+    author: authorFrom(post.author, site),
     date: toPostDate(post.publishedAt || post.createdAt),
     count_time: estimateReading(plain),
     html

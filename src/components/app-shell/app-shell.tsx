@@ -7,14 +7,37 @@ import MobileMenu from '@/components/mobile-menu/mobile-menu'
 import ProgressBar from '@/components/progress-bar/progress-bar'
 import SearchModal from '@/components/search-modal/search-modal'
 import SvgSprite from '@/components/svg-icon/svg-sprite'
+import type { SiteConfig } from '@/config/site-config'
 import { useAppStore } from '@/stores/app'
-import { useEffect, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react'
 
-export default function AppShell({ children }: { children: ReactNode }) {
+type AppShellProps = {
+  children: ReactNode
+  /** Server-resolved config (CMS profile texts + code defaults). */
+  siteConfigFromCms?: SiteConfig
+}
+
+export default function AppShell({
+  children,
+  siteConfigFromCms
+}: AppShellProps) {
   const theme = useAppStore(s => s.theme)
   const themeConfig = useAppStore(s => s.themeConfig)
   const headerImage = useAppStore(s => s.headerImage)
   const setTheme = useAppStore(s => s.setTheme)
+  const hydrated = useRef(false)
+
+  // Sync CMS profile before paint to avoid nick/signature flash.
+  if (siteConfigFromCms && !hydrated.current) {
+    useAppStore.setState({ themeConfig: siteConfigFromCms, configReady: true })
+    hydrated.current = true
+  }
+
+  useEffect(() => {
+    if (siteConfigFromCms) {
+      useAppStore.getState().setThemeConfig(siteConfigFromCms)
+    }
+  }, [siteConfigFromCms])
 
   useEffect(() => {
     const cookieTheme = document.cookie

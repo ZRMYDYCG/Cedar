@@ -1,6 +1,7 @@
-import { safeCms } from '@/data/cms/safe'
-import { getPayloadClient } from '@/lib/payload'
 import { siteConfig } from '@/config/site-config'
+import { safeCms } from '@/data/cms/safe'
+import { getResolvedSiteConfig } from '@/data/cms/site-settings'
+import { getPayloadClient } from '@/lib/payload'
 import type { Media, Moment } from '@/payload-types'
 
 export type MomentImage = {
@@ -35,7 +36,10 @@ function mediaUrl(media: number | Media | null | undefined): MomentImage | null 
   }
 }
 
-export function mapMoment(doc: Moment): MomentCard {
+export function mapMoment(
+  doc: Moment,
+  site: (typeof siteConfig)['site'] = siteConfig.site
+): MomentCard {
   const images = (doc.images || [])
     .map(row => mediaUrl(row?.image))
     .filter((img): img is MomentImage => Boolean(img))
@@ -48,8 +52,8 @@ export function mapMoment(doc: Moment): MomentCard {
     publishedAt: doc.publishedAt,
     images,
     author: {
-      name: siteConfig.site.nick || siteConfig.site.author,
-      avatar: siteConfig.site.avatar
+      name: site.nick || site.author,
+      avatar: site.avatar
     }
   }
 }
@@ -59,19 +63,24 @@ export async function getPublishedMoments(limit = 50): Promise<MomentCard[]> {
     'getPublishedMoments',
     async () => {
       const payload = await getPayloadClient()
-      const result = await payload.find({
-        collection: 'moments',
-        where: {
-          _status: { equals: 'published' }
-        },
-        depth: 2,
-        limit,
-        sort: '-publishedAt',
-        draft: false,
-        overrideAccess: false
-      })
+      const [result, resolved] = await Promise.all([
+        payload.find({
+          collection: 'moments',
+          where: {
+            _status: { equals: 'published' }
+          },
+          depth: 2,
+          limit,
+          sort: '-publishedAt',
+          draft: false,
+          overrideAccess: false
+        }),
+        getResolvedSiteConfig()
+      ])
 
-      return (result.docs as Moment[]).map(mapMoment)
+      return (result.docs as Moment[]).map(doc =>
+        mapMoment(doc, resolved.site)
+      )
     },
     []
   )

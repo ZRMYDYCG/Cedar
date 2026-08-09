@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url'
 import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
 import { Moments } from './collections/Moments'
+import { SiteSettings } from './globals/SiteSettings'
 import { migrations } from './migrations'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
@@ -51,6 +52,7 @@ export default buildConfig({
     }
   },
   collections: [Users, Media, Posts, Moments, Pages, Categories, Tags],
+  globals: [SiteSettings],
   editor: lexicalEditor(),
   secret: env('PAYLOAD_SECRET') || 'INSECURE_MISSING_PAYLOAD_SECRET',
   typescript: {

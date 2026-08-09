@@ -1,5 +1,6 @@
 import { mapPostToCard, type PostCardWithHtml } from '@/data/cms/map-post'
 import { safeCms } from '@/data/cms/safe'
+import { getResolvedSiteConfig } from '@/data/cms/site-settings'
 import { getPayloadClient } from '@/lib/payload'
 import { decodePathSegment } from '@/lib/path-segment'
 import type { Post } from '@/payload-types'
@@ -27,8 +28,11 @@ export async function getPublishedPosts(): Promise<PostCardWithHtml[]> {
   return safeCms(
     'getPublishedPosts',
     async () => {
-      const docs = await findPosts(published, 200)
-      return docs.map(doc => mapPostToCard(doc))
+      const [docs, siteConfig] = await Promise.all([
+        findPosts(published, 200),
+        getResolvedSiteConfig()
+      ])
+      return docs.map(doc => mapPostToCard(doc, { site: siteConfig.site }))
     },
     []
   )
@@ -41,13 +45,18 @@ export async function getFeaturedPosts(): Promise<{
   return safeCms(
     'getFeaturedPosts',
     async () => {
-      const docs = await findPosts(
-        {
-          and: [published, { featured: { equals: true } }]
-        },
-        12
+      const [docs, siteConfig] = await Promise.all([
+        findPosts(
+          {
+            and: [published, { featured: { equals: true } }]
+          },
+          12
+        ),
+        getResolvedSiteConfig()
+      ])
+      const cards = docs.map(doc =>
+        mapPostToCard(doc, { site: siteConfig.site })
       )
-      const cards = docs.map(doc => mapPostToCard(doc))
       const result: {
         feature?: PostCardWithHtml
         featureList: PostCardWithHtml[]
@@ -68,14 +77,20 @@ export async function getPostBySlug(
   return safeCms(
     `getPostBySlug:${normalized}`,
     async () => {
-      const docs = await findPosts(
-        {
-          and: [published, { slug: { equals: normalized } }]
-        },
-        1
-      )
+      const [docs, siteConfig] = await Promise.all([
+        findPosts(
+          {
+            and: [published, { slug: { equals: normalized } }]
+          },
+          1
+        ),
+        getResolvedSiteConfig()
+      ])
       if (!docs[0]) return null
-      return mapPostToCard(docs[0], { withHtml: true })
+      return mapPostToCard(docs[0], {
+        withHtml: true,
+        site: siteConfig.site
+      })
     },
     null
   )

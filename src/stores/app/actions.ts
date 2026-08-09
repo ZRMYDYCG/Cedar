@@ -1,3 +1,4 @@
+import type { SiteConfig } from '@/config/site-config'
 import type { StateCreator } from 'zustand'
 import type { AppSliceState, LocaleCode, ThemeMode } from './slice'
 
@@ -5,6 +6,7 @@ export type AppActions = {
   setTheme: (theme: ThemeMode) => void
   toggleTheme: (status?: boolean) => void
   setLocale: (locale: LocaleCode) => void
+  setThemeConfig: (themeConfig: SiteConfig) => void
   setConfigReady: (ready: boolean) => void
   setScrollProgress: (progress: number) => void
   toggleMobileMenu: (open?: boolean) => void
@@ -51,6 +53,7 @@ export const createAppActions: StateCreator<
     }
     set({ locale })
   },
+  setThemeConfig: themeConfig => set({ themeConfig, configReady: true }),
   setConfigReady: ready => set({ configReady: ready }),
   setScrollProgress: progress => set({ scrollProgress: progress }),
   toggleMobileMenu: open =>

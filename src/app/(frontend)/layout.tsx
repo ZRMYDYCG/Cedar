@@ -1,4 +1,5 @@
 import AppShell from '@/components/app-shell/app-shell'
+import { getResolvedSiteConfig } from '@/data/cms/site-settings'
 import QueryProvider from '@/providers/query-provider'
 import '@/styles/theme.css'
 import '@/styles/tw.css'
@@ -7,9 +8,13 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
 import type { ReactNode } from 'react'
 
-export const metadata: Metadata = {
-  title: 'Cedar',
-  description: 'Cedar — personal site powered by Next.js & Payload'
+export async function generateMetadata(): Promise<Metadata> {
+  const config = await getResolvedSiteConfig()
+  const name = config.site.author || 'Cedar'
+  return {
+    title: name,
+    description: config.site.subtitle || `${name} — personal site`
+  }
 }
 
 export default async function FrontendLayout({
@@ -17,8 +22,11 @@ export default async function FrontendLayout({
 }: {
   children: ReactNode
 }) {
-  const locale = await getLocale()
-  const messages = await getMessages()
+  const [locale, messages, siteConfigFromCms] = await Promise.all([
+    getLocale(),
+    getMessages(),
+    getResolvedSiteConfig()
+  ])
 
   return (
     <html lang={locale} className="theme-dark" suppressHydrationWarning>
@@ -30,7 +38,7 @@ export default async function FrontendLayout({
         />
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
-            <AppShell>{children}</AppShell>
+            <AppShell siteConfigFromCms={siteConfigFromCms}>{children}</AppShell>
           </QueryProvider>
         </NextIntlClientProvider>
       </body>

@@ -43,6 +43,7 @@ export type SiteConfig = {
 const gradient =
   'linear-gradient(130deg, #3dba60, #4ade80 41.07%, #7d5a44 76.05%)'
 
+/** Code defaults. Profile texts (author / nick / subtitle) are overridden by CMS Global `site-settings`. */
 export const siteConfig: SiteConfig = {
   site: {
     author: 'Cedar',
