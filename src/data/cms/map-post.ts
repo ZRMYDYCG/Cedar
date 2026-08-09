@@ -80,6 +80,12 @@ function lexicalToPlainText(node: unknown): string {
     text?: unknown
     type?: unknown
     children?: unknown
+    root?: unknown
+  }
+
+  // Serialized editor state is `{ root: { children: [...] } }`.
+  if (value.root) {
+    return lexicalToPlainText(value.root)
   }
 
   if (typeof value.text === 'string' && value.text) {
