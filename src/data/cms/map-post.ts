@@ -58,7 +58,8 @@ function estimateReading(text: string) {
   const mins = Math.max(1, Math.round(symbolsCount / 400))
   return {
     symbolsCount,
-    symbolsTime: `${mins} mins`
+    // Numeric minutes; PostStats localizes via settings.reading-time
+    symbolsTime: String(mins)
   }
 }
 

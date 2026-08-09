@@ -6,12 +6,32 @@
     "categories": "分类",
     "tags": "标签",
     "post": "文章",
+    "moments": "朋友圈",
+    "links": "友链",
     "message-board": "留言板",
     "search": "搜索结果",
     "not-found": "无法找到页面"
   },
   "home": {
-    "recommended": "推荐文章"
+    "recommended": "推荐文章",
+    "editors-selection": "编辑精选"
+  },
+  "moments": {
+    "cover-label": "朋友圈封面",
+    "view-image": "查看第 {index} 张图片",
+    "preview-label": "图片预览",
+    "close": "关闭",
+    "prev": "上一张",
+    "next": "下一张",
+    "tap-to-close": "点击空白处关闭",
+    "time-just-now": "刚刚",
+    "time-minutes-ago": "{count} 分钟前",
+    "time-hours-ago": "{count} 小时前",
+    "time-days-ago": "{count} 天前"
+  },
+  "footer": {
+    "label": "页脚",
+    "tagline": "在雪松下慢慢写"
   },
   "titles": {
     "articles": "文章列表",
@@ -72,9 +92,12 @@
     "empty-posts": "目前还没有文章",
     "empty-archives": "目前还没有归档内容",
     "empty-moments": "还没有动态",
-    "empty-moments-hint": "在 Payload Admin 打开「朋友圈」，新建并 Publish。",
+    "empty-moments-hint": "在 Payload Admin 打开「朋友圈」，新建并发布。",
     "empty-links": "目前还没有友情链接",
     "empty-links-hint": "欢迎交换友链，在下方留言区提交申请。",
+    "links-apply-guide": "欢迎交换友链。请在申请时附上站点名称、简介与头像地址。",
+    "reading-time": "{count} 分钟",
+    "comment-placeholder": "评论组件占位（{title}）。",
     "empty-toc": "本文暂无目录",
     "empty-recent-comments": "目前没有最新评论",
     "pinned": "置顶",

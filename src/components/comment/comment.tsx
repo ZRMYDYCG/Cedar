@@ -2,6 +2,7 @@
 
 import MainTitle from '@/components/title/main-title'
 import { useAppStore } from '@/stores/app'
+import { useTranslations } from 'next-intl'
 
 type CommentProps = {
   title?: string
@@ -10,6 +11,7 @@ type CommentProps = {
 }
 
 export default function Comment({ title = '' }: CommentProps) {
+  const t = useTranslations('settings')
   const shape = useAppStore(s => s.themeConfig.theme.profile_shape)
 
   return (
@@ -23,7 +25,9 @@ export default function Comment({ title = '' }: CommentProps) {
         textSize="text-2xl md:text-3xl"
       />
       <div id="waline" className="mt-4 text-sm text-ob-dim">
-        Waline comment placeholder for “{title || 'post'}”.
+        {t('comment-placeholder', {
+          title: title || t('default-category')
+        })}
       </div>
     </div>
   )

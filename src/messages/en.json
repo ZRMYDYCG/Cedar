@@ -6,12 +6,32 @@
     "categories": "Categories",
     "tags": "Tags",
     "post": "Article",
+    "moments": "Moments",
+    "links": "Friends",
     "search": "Search results",
     "message-board": "Message Board",
     "not-found": "Page not found"
   },
   "home": {
-    "recommended": "Feature Articles"
+    "recommended": "Feature Articles",
+    "editors-selection": "Editor's Selection"
+  },
+  "moments": {
+    "cover-label": "Moments cover",
+    "view-image": "View image {index}",
+    "preview-label": "Image preview",
+    "close": "Close",
+    "prev": "Previous",
+    "next": "Next",
+    "tap-to-close": "Tap outside to close",
+    "time-just-now": "Just now",
+    "time-minutes-ago": "{count}m ago",
+    "time-hours-ago": "{count}h ago",
+    "time-days-ago": "{count}d ago"
+  },
+  "footer": {
+    "label": "Footer",
+    "tagline": "Writing slowly under the cedar"
   },
   "titles": {
     "articles": "Articles",
@@ -72,9 +92,12 @@
     "empty-posts": "No posts yet.",
     "empty-archives": "No archives yet.",
     "empty-moments": "No moments yet.",
-    "empty-moments-hint": "Open Moments in Payload Admin, create one, then Publish.",
+    "empty-moments-hint": "Open Moments in Payload Admin, create one, then publish it.",
     "empty-links": "No friend links yet.",
     "empty-links-hint": "Want to exchange links? Leave a request in the comments below.",
+    "links-apply-guide": "Want to exchange links? Include your site name, bio, and avatar URL in the request.",
+    "reading-time": "{count, plural, one {# min} other {# mins}}",
+    "comment-placeholder": "Comment widget placeholder for “{title}”.",
     "empty-toc": "No table of contents for this post.",
     "empty-recent-comments": "No recent comments right now.",
     "pinned": "Pin",

@@ -21,7 +21,7 @@ export default function FeatureList({ data }: FeatureListProps) {
         <div className="ob-gradient-plate relative z-10 flex items-end justify-start rounded-2xl bg-ob-deep-900 px-6 pb-10 opacity-90 shadow-md">
           <h2 className="pb-8 text-3xl lg:pb-14">
             <p style={theme.background_gradient_style as CSSProperties}>
-              EDITOR&apos;S SELECTION
+              {t('editors-selection')}
             </p>
             <span className="relative text-lg font-semibold text-ob-bright">
               <SvgIcon className="inline-block" iconClass="hot" stroke="white" />

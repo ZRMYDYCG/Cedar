@@ -4,7 +4,7 @@ import Breadcrumbs from '@/components/breadcrumbs/breadcrumbs'
 import EmptyState from '@/components/empty-state/empty-state'
 import type { MomentCard } from '@/data/cms/moments'
 import { useAppStore } from '@/stores/app'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useMemo, useState } from 'react'
 
 type MomentsViewProps = {
@@ -16,7 +16,11 @@ type PreviewState = {
   index: number
 }
 
-function formatMomentTime(value?: string | null) {
+function formatMomentTime(
+  value: string | null | undefined,
+  locale: string,
+  t: (key: string, values?: { count: number }) => string
+) {
   if (!value) return ''
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return ''
@@ -27,12 +31,18 @@ function formatMomentTime(value?: string | null) {
   const hour = 60 * minute
   const day = 24 * hour
 
-  if (diff < minute) return '刚刚'
-  if (diff < hour) return `${Math.floor(diff / minute)} 分钟前`
-  if (diff < day) return `${Math.floor(diff / hour)} 小时前`
-  if (diff < 7 * day) return `${Math.floor(diff / day)} 天前`
+  if (diff < minute) return t('time-just-now')
+  if (diff < hour) {
+    return t('time-minutes-ago', { count: Math.floor(diff / minute) })
+  }
+  if (diff < day) {
+    return t('time-hours-ago', { count: Math.floor(diff / hour) })
+  }
+  if (diff < 7 * day) {
+    return t('time-days-ago', { count: Math.floor(diff / day) })
+  }
 
-  return new Intl.DateTimeFormat('zh-CN', {
+  return new Intl.DateTimeFormat(locale, {
     month: 'numeric',
     day: 'numeric',
     hour: '2-digit',
@@ -46,6 +56,9 @@ function gridClass(count: number) {
 
 export default function MomentsView({ moments }: MomentsViewProps) {
   const t = useTranslations('settings')
+  const tMoments = useTranslations('moments')
+  const tMenu = useTranslations('menu')
+  const locale = useLocale()
   const resetHeaderImage = useAppStore(s => s.resetHeaderImage)
   const themeConfig = useAppStore(s => s.themeConfig)
   const [preview, setPreview] = useState<PreviewState | null>(null)
@@ -55,7 +68,7 @@ export default function MomentsView({ moments }: MomentsViewProps) {
   const authorSignature = themeConfig.site.subtitle || ''
   const coverSrc = '/images/moments-cover.png'
 
-  // Cover lives in-page (图一); keep site banner as pure gradient
+  // Cover lives in-page; keep site banner as pure gradient
   useEffect(() => {
     resetHeaderImage()
     return () => resetHeaderImage()
@@ -98,7 +111,7 @@ export default function MomentsView({ moments }: MomentsViewProps) {
     }
   }, [preview])
 
-  const title = useMemo(() => '朋友圈', [])
+  const title = useMemo(() => tMenu('moments'), [tMenu])
 
   const openPreview = (urls: string[], index: number) => {
     setPreview({ urls, index })
@@ -123,7 +136,7 @@ export default function MomentsView({ moments }: MomentsViewProps) {
           Hero owns cover + overhang band so the avatar is never clipped by
           site banners / parent overflow (matches WeChat Moments prototype).
         */}
-        <section className="moments-hero" aria-label="朋友圈封面">
+        <section className="moments-hero" aria-label={tMoments('cover-label')}>
           <div className="moments-cover">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img className="moments-cover-photo" src={coverSrc} alt="" />
@@ -179,7 +192,9 @@ export default function MomentsView({ moments }: MomentsViewProps) {
                             type="button"
                             className="moment-cell"
                             onClick={() => openPreview(imageUrls, index)}
-                            aria-label={`查看第 ${index + 1} 张图片`}
+                            aria-label={tMoments('view-image', {
+                              index: index + 1
+                            })}
                           >
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={image.url} alt={image.alt || ''} />
@@ -190,7 +205,11 @@ export default function MomentsView({ moments }: MomentsViewProps) {
 
                     <div className="moment-foot">
                       <time dateTime={moment.publishedAt || undefined}>
-                        {formatMomentTime(moment.publishedAt)}
+                        {formatMomentTime(
+                          moment.publishedAt,
+                          locale,
+                          tMoments
+                        )}
                       </time>
                       {moment.location ? (
                         <span className="moment-place">{moment.location}</span>
@@ -209,7 +228,7 @@ export default function MomentsView({ moments }: MomentsViewProps) {
           className="moment-lightbox"
           role="dialog"
           aria-modal="true"
-          aria-label="图片预览"
+          aria-label={tMoments('preview-label')}
         >
           <div className="moment-lightbox-top">
             <button
@@ -217,7 +236,7 @@ export default function MomentsView({ moments }: MomentsViewProps) {
               className="moment-lightbox-close"
               onClick={() => setPreview(null)}
             >
-              关闭
+              {tMoments('close')}
             </button>
           </div>
           <div
@@ -239,7 +258,7 @@ export default function MomentsView({ moments }: MomentsViewProps) {
                   className="moment-lightbox-nav"
                   onClick={() => shiftPreview(-1)}
                 >
-                  上一张
+                  {tMoments('prev')}
                 </button>
                 <span>
                   {preview.index + 1} / {preview.urls.length}
@@ -249,11 +268,11 @@ export default function MomentsView({ moments }: MomentsViewProps) {
                   className="moment-lightbox-nav"
                   onClick={() => shiftPreview(1)}
                 >
-                  下一张
+                  {tMoments('next')}
                 </button>
               </>
             ) : (
-              <span>点击空白处关闭</span>
+              <span>{tMoments('tap-to-close')}</span>
             )}
           </div>
         </div>

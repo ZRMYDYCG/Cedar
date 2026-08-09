@@ -41,7 +41,7 @@ export default function LinksPage() {
         <div className="post-header">
           <h1 className="post-title uppercase text-white">{pageTitle}</h1>
           <div className="mt-8 mb-4 flex flex-row items-center justify-start">
-            <PostStats postWordCount={420} postTimeCount="2 mins" comments />
+            <PostStats postWordCount={420} postTimeCount={2} comments />
           </div>
         </div>
 
@@ -54,7 +54,7 @@ export default function LinksPage() {
 
         <div className="mt-8" id="content">
           <div className="post-html">
-            <p>欢迎交换友链。请在申请时附上站点名称、简介与头像地址。</p>
+            <p>{t('settings.links-apply-guide')}</p>
           </div>
         </div>
 

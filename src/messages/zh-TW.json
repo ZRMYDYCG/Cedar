@@ -6,12 +6,32 @@
     "categories": "分類",
     "tags": "標簽",
     "post": "文章",
+    "moments": "朋友圈",
+    "links": "友鏈",
     "message-board": "留言闆",
     "search": "搜索結果",
     "not-found": "無法找到頁面"
   },
   "home": {
-    "recommended": "推薦文章"
+    "recommended": "推薦文章",
+    "editors-selection": "編輯精選"
+  },
+  "moments": {
+    "cover-label": "朋友圈封面",
+    "view-image": "查看第 {index} 張圖片",
+    "preview-label": "圖片預覽",
+    "close": "關閉",
+    "prev": "上一張",
+    "next": "下一張",
+    "tap-to-close": "點擊空白處關閉",
+    "time-just-now": "剛剛",
+    "time-minutes-ago": "{count} 分鐘前",
+    "time-hours-ago": "{count} 小時前",
+    "time-days-ago": "{count} 天前"
+  },
+  "footer": {
+    "label": "頁腳",
+    "tagline": "在雪松下慢慢寫"
   },
   "titles": {
     "articles": "文章列錶",
@@ -72,9 +92,12 @@
     "empty-posts": "目前還沒有文章",
     "empty-archives": "目前還沒有歸檔內容",
     "empty-moments": "還沒有動態",
-    "empty-moments-hint": "在 Payload Admin 打開「朋友圈」，新建並 Publish。",
+    "empty-moments-hint": "在 Payload Admin 打開「朋友圈」，新建並發佈。",
     "empty-links": "目前還沒有友情連結",
     "empty-links-hint": "歡迎交換友鏈，在下方留言區提交申請。",
+    "links-apply-guide": "歡迎交換友鏈。請在申請時附上站點名稱、簡介與頭像地址。",
+    "reading-time": "{count} 分鐘",
+    "comment-placeholder": "評論組件佔位（{title}）。",
     "empty-toc": "本文暫無目錄",
     "empty-recent-comments": "目前沒有最新評論",
     "pinned": "置頂",
