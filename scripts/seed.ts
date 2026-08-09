@@ -126,10 +126,10 @@ export async function seed() {
   }
 
   await upsertBySlug(payload, 'pages', 'about', {
-    title: 'About',
+    title: '关于',
     slug: 'about',
     content: lexical(
-      'This is Cedar. Edit this page anytime in /admin.'
+      '你好，我是一勺（Cedar）。人生是长久的积累。这里是我的个人站点：记一点笔记，晒一点朋友圈，把技术与日常慢慢留下。'
     ),
     _status: 'published'
   })

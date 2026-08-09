@@ -70,7 +70,7 @@ export const siteConfig: SiteConfig = {
     }
   },
   socials: {
-    github: 'https://github.com',
+    github: 'https://github.com/ZRMYDYCG',
     twitter: 'https://twitter.com'
   },
   menu: {
