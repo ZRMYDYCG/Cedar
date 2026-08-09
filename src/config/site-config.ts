@@ -49,12 +49,12 @@ export const siteConfig: SiteConfig = {
     nick: 'Cedar',
     subtitle: 'Notes under the cedar',
     logo: '',
-    avatar: 'https://avatars.githubusercontent.com/u/9919?s=200&v=4',
+    avatar: '/images/avatar.jpg',
     multi_language: true
   },
   theme: {
     dark_mode: true,
-    profile_shape: 'diamond-avatar',
+    profile_shape: 'circle-avatar',
     feature: true,
     header_gradient_css: gradient,
     gradient: {
