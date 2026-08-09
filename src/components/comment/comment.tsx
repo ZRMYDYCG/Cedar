@@ -6,7 +6,7 @@ import {
   groupComments,
   type CommentCard,
   type CommentTargetKind
-} from '@/data/cms/comments'
+} from '@/data/cms/comments-shared'
 import { useAppStore } from '@/stores/app'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'

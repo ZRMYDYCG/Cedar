@@ -5,7 +5,7 @@ import SubTitle from '@/components/title/sub-title'
 import {
   commentHref,
   type CommentCard
-} from '@/data/cms/comments'
+} from '@/data/cms/comments-shared'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 
