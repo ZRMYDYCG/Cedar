@@ -33,7 +33,3 @@ Optional:
 pnpm seed        # demo posts (optional)
 pnpm clear:demo  # wipe demo content
 ```
-
-## Notes
-
-- `.env`: `POSTGRES_URL`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`, and for media uploads `GITEE_OWNER` / `GITEE_REPO` / `GITEE_TOKEN`
